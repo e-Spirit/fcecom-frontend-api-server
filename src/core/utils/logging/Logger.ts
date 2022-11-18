@@ -1,9 +1,9 @@
 import chalk from 'chalk';
 import { inspect } from 'util';
-import { LogLevel } from 'fsxa-api';
 
 const formatOutput = (...args: any[]) => {
   args = args.map((entry) => {
+    if (entry instanceof Error) return `${entry.name} | ${entry.message}`
     if (typeof entry === 'object') return JSON.stringify(entry);
     return entry;
   });
@@ -15,17 +15,16 @@ const formatOutput = (...args: any[]) => {
     breakLength: Infinity,
   }).replace(/'/g, '');
 };
+
 export class Logger {
-  private readonly _logLevel: LogLevel;
   private readonly _name: string;
 
-  constructor(logLevel: LogLevel, name: string) {
-    this._logLevel = logLevel;
+  constructor(name: string) {
     this._name = name;
   }
 
   debug(...args: any[]) {
-    if (this._logLevel <= LogLevel.DEBUG) {
+    if (Logging.logLevel <= LogLevel.DEBUG) {
       console.debug(chalk.gray(`${chalk.bgWhite.black(' DEBUG ')} ${this._name} | ${formatOutput(...args)}`));
     }
   }
@@ -35,22 +34,42 @@ export class Logger {
   }
 
   info(...args: any[]) {
-    if (this._logLevel <= LogLevel.INFO) {
+    if (Logging.logLevel <= LogLevel.INFO) {
       console.info(chalk.blue(`${chalk.bgBlue.white(' INFO ')} ${this._name} | ${formatOutput(...args)}`));
     }
   }
 
+  success(...args: any[]) {
+    if (Logging.logLevel <= LogLevel.INFO) {
+      console.info(chalk.green(`${chalk.bgGreen.black(' SUCCESS ')} ${this._name} | ${formatOutput(...args)}`));
+    }
+  }
+
   warn(...args: any[]) {
-    if (this._logLevel <= LogLevel.WARNING) {
+    if (Logging.logLevel <= LogLevel.WARNING) {
       console.warn(chalk.yellow(`${chalk.bgYellow.black(' WARN ')} ${this._name} | ${formatOutput(...args)}`));
     }
   }
 
   error(...args: any[]) {
-    if (this._logLevel <= LogLevel.ERROR) {
+    if (Logging.logLevel <= LogLevel.ERROR) {
       console.error(chalk.red(`${chalk.bgRed.black(' ERROR ')} ${this._name} | ${formatOutput(...args)}`));
     }
   }
 }
 
-export { LogLevel };
+export enum LogLevel {
+  DEBUG = 0,
+  INFO = 1, // & SUCCESS
+  WARNING = 2,
+  ERROR = 3,
+  NONE = 4,
+}
+
+export namespace Logging {
+  export let logLevel = LogLevel.INFO;
+
+  export const init = (level: LogLevel) => {
+    logLevel = level ?? LogLevel.INFO;
+  };
+}

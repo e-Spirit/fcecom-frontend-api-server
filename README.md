@@ -1,21 +1,20 @@
-# FirstSpirit Connect for Commerce Frontend API
+# FirstSpirit Connect for Commerce Frontend API · Server
 
-The [Connect for Commerce Frontend API](https://www.npmjs.com/package/fcecom-frontend-api-client) is a superset of
-the [FSXA API](https://www.npmjs.com/package/fsxa-api) that extends its functionality with e-commerce specific use
-cases.
+This API allows the easy integration of FirstSpirit Connect for Commerce functionalities in e-commerce projects.
 
 Examples and use cases can be found in
-the [documentation](https://docs.e-spirit.com/ecom/fsconnect-com-frontend-api/latest).
+the [documentation](https://docs.e-spirit.com/ecom/fsconnect-com-api/fsconnect-com-frontend-api/latest).
 
 For more information about FirstSpirit or Connect for Commerce please use [this contact form](https://www.crownpeak.com/contact-us) to get in touch.
 
 ## How to use
 
-Install the module using `npm i fcecom-frontend-api-client`.
+Install the module using `npm i fcecom-frontend-api-server`.
 
-## Backend Server
-It is required to use a backend service for authentication.
-Clone the [Connect for Commerce Frontend API Backend Service](https://github.com/e-Spirit/fcecom-frontend-api-backend) repository and follow the setup instructions.
+<small>_OR_</small>
+
+We provide a reference implementation using this library.
+See [this repository](https://github.com/e-Spirit/fcecom-frontend-api-backend).
 
 ## Legal Notices
 

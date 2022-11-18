@@ -1,4 +1,2 @@
-export { sessionMiddleware } from './core/utils/sessionMiddleware';
-export { EcomFSXARemoteApi } from './core/api/ecomFSXARemoteApi';
-
-export * from 'fsxa-api';
+export { getEcomEndpoints } from './core/integrations/express/express';
+export { initCoreConfig } from './core/utils/config';
