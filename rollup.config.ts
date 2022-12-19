@@ -6,7 +6,6 @@ import { terser } from 'rollup-plugin-terser';
 import ts from 'rollup-plugin-ts';
 // @ts-ignore JSON is not correctly validated via TSLint
 import { dependencies, main, module, peerDependencies } from './package.json';
-import nodePolyfills from 'rollup-plugin-node-polyfills';
 
 const extensions = ['.js', '.ts'];
 
@@ -35,7 +34,6 @@ export default [
         babelHelpers: 'bundled',
       }),
       terser(),
-      nodePolyfills(),
     ],
   },
 ];
