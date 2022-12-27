@@ -8,7 +8,7 @@ import { getLogger } from '../../utils/logging/getLogger';
  * Generates an Express middleware based on the given project configuration.
  *
  * @param config Core configuration to get middleware for.
- * @returns
+ * @returns Express router handling the Connect-for-Commerce endpoints.
  */
 export const getEcomEndpoints = (config: CoreConfig) => {
   const logger = getLogger('Get E-Commerce Endpoints');

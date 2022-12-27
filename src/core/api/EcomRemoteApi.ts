@@ -58,7 +58,7 @@ export class EcomRemoteApi {
    * @param params Parameters to use to fetch the service.
    * @return {*} The navigation returned by the navigation service.
    */
-  async fetchNavigation(params: FetchNavigationParams): Promise<NavigationData | null> {
+  async fetchNavigation(params: FetchNavigationParams) {
     const { locale, initialPath } = params;
     if (typeof locale === 'undefined') throw new MissingParameterError('locale is undefined');
 

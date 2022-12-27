@@ -6,6 +6,7 @@ import { getLogger } from "../../../utils/logging/getLogger";
  * Handler to use if no other route matches.
  * Responsible to send 404.
  *
+ * @internal
  * @param req Express request object.
  * @param res Express response object.
  * @return {*}

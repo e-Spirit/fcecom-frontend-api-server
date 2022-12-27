@@ -8,7 +8,10 @@ export namespace APIProvider {
   let releaseApi: EcomRemoteApi | undefined;
 
   /**
-   * Initialize the APIProvider and create the EcomRemoteApi instances.   *
+   * Initialize the APIProvider and create the EcomRemoteApi instances.
+   *
+   * @param fsxaConfig The FSXA configurations to use.
+   * @internal
    */
   export const init = (fsxaConfig: FSXAConfig) => {
     previewApi = new EcomRemoteApi(new FSXARemoteApi(fsxaConfig.preview));
@@ -17,6 +20,8 @@ export namespace APIProvider {
 
   /**
    * Returns the instance of the preview EcomRemoteApi.
+   *
+   * @internal
    */
   export const getPreviewApi = () => {
     if (!previewApi) throw new Error('APIProvider not initialized');
@@ -25,6 +30,9 @@ export namespace APIProvider {
   };
   /**
    * Returns the instance of the release EcomRemoteApi.
+   *
+   * @param [fallback=false] Whether to use it because of fallback.
+   * @internal
    */
   export const getReleaseApi = (fallback: boolean = false) => {
     if (!releaseApi) throw new Error('APIProvider not initialized');
@@ -37,12 +45,14 @@ export namespace APIProvider {
    * Logs the provided api type for debugging purposes.
    *
    * @internal
-   * @param apiType name of the API type
+   * @param apiType Name of the API type.
    */
   export const logProvidedApi = (apiType: string) => getLogger('Provide API').debug('using api', apiType);
 
   /**
    * Clears the API instances.
+   * 
+   * @internal
    */
   export const clear = () => {
     previewApi = undefined;

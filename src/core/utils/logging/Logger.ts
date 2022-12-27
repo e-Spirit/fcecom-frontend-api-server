@@ -1,3 +1,9 @@
+/**
+ * @module
+ * @internal
+ */
+
+
 import chalk from 'chalk';
 import { inspect } from 'util';
 
@@ -16,6 +22,13 @@ const formatOutput = (...args: any[]) => {
   }).replace(/'/g, '');
 };
 
+/**
+ * Logger class.
+ *
+ * @internal
+ * @export
+ * @class Logger
+ */
 export class Logger {
   private readonly _name: string;
 
@@ -58,6 +71,12 @@ export class Logger {
   }
 }
 
+/**
+ * The log level to use.
+ *
+ * @export
+ * @enum {number}
+ */
 export enum LogLevel {
   DEBUG = 0,
   INFO = 1, // & SUCCESS
@@ -66,9 +85,19 @@ export enum LogLevel {
   NONE = 4,
 }
 
+/**
+ * Namespace for the logging.
+ * 
+ * @internal
+ */
 export namespace Logging {
   export let logLevel = LogLevel.INFO;
 
+  /**
+   * Initialize the logger.
+   *
+   * @param level The log level to set.
+   */
   export const init = (level: LogLevel) => {
     logLevel = level ?? LogLevel.INFO;
   };

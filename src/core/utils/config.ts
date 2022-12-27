@@ -6,11 +6,27 @@ import { APIProvider } from './APIProvider';
 import cloneDeep from 'lodash.clonedeep';
 import { validateCoreConfig } from './configValidation';
 
+
+/**
+ * Initializes the API with the given core configuration.
+ *
+ * @param config Core configuration to set.
+ */
 export const initCoreConfig = (config: CoreConfig) => EcomConfig.setConfig(config);
 
 export namespace EcomConfig {
+
+  /**
+   * The current core configuration.
+   */
   export let coreConfig: CoreConfig;
 
+  /**
+   * Sets the current configuration.
+   * 
+   * @internal
+   * @param config The configuration to set.
+   */
   export const setConfig = (config: CoreConfig) => {
     coreConfig = cloneDeep(config);
 
@@ -34,8 +50,20 @@ export namespace EcomConfig {
     APIProvider.init(getFSXAConfig());
   };
 
+  /**
+   * Gets the current core configuration.
+   * 
+   * @internal
+   * @returns The current core configuration.
+   */
   export const getCoreConfig = (): CoreConfig => coreConfig;
 
+  /**
+   * Gets the current FSXA configuration.
+   * 
+   * @internal
+   * @returns The current configuration for the FSXA API.
+   */
   export const getFSXAConfig = (): FSXAConfig => {
     const {
       apiKey: { preview: previewApiKey, release: releaseApiKey },

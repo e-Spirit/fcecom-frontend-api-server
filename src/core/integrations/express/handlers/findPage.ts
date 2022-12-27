@@ -4,15 +4,31 @@ import { FSXAApiErrors } from 'fsxa-api';
 import { getLogger } from "../../../utils/logging/getLogger";
 import { extractParamsFromRequest } from '../helper';
 
-export interface FindPageParams {
+/**
+ * Parameters used to find a page.
+ *
+ * @export
+ * @interface FindPageParams
+ */
+export type FindPageParams = {
+  /**
+   * ID of the page.
+   */
   id: string;
+  /**
+   * Locale to get the page in.
+   */
   locale: string;
+  /**
+   * Type of the page.
+   */
   type: string;
 }
 
 /**
  * Handler to use for the findPage route.
  *
+ * @internal
  * @param req Express request object.
  * @param res Express response object.
  * @return {*}
@@ -36,4 +52,7 @@ export const findPage = async (req: Request<any, any>, res: Response): Promise<R
   }
 };
 
+/**
+ * @internal
+ */
 export const FIND_PAGE_ROUTE = '/findPage';

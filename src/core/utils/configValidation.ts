@@ -2,6 +2,12 @@ import joi, { ValidationErrorItem, ValidationResult } from 'joi';
 import { CoreConfig } from './config.meta';
 import { getLogger } from './logging/getLogger';
 
+
+/**
+ * Schema to validate the server configuration.
+ * 
+ * @internal
+ */
 export const serverSchema = joi
   .object({
     port: joi.number().port().default(3001).label('Server Port').description('The port on which this backend service is started.'),
@@ -9,6 +15,11 @@ export const serverSchema = joi
   })
   .label('Server Config');
 
+/**
+ * Schema to validate the API key configuration.
+ * 
+ * @internal
+ */
 export const apiKeySchema = joi
   .object({
     master: joi
@@ -36,6 +47,11 @@ export const apiKeySchema = joi
   .label('API Key Config')
   .description('The API key of the CaaS instance for different viewing modes.');
 
+/**
+ * Schema to validate the project configuration.
+ * 
+ * @internal
+ */
 export const projectSchema = joi
   .object({
     navigationServiceURL: joi
@@ -52,6 +68,11 @@ export const projectSchema = joi
   })
   .label('Project Config');
 
+/**
+ * Schema to validate the core configuration.
+ * 
+ * @internal
+ */
 export const coreSchema = joi
   .object({
     fsServerOrigin: joi
@@ -69,6 +90,11 @@ export const coreSchema = joi
   })
   .label('Core Config');
 
+/**
+ * Schema to validate the configuration.
+ * 
+ * @internal
+ */
 export const configSchema = joi.object({
   server: serverSchema.required(),
   core: coreSchema.required(),
@@ -76,7 +102,17 @@ export const configSchema = joi.object({
 
 const logConfigProblems = ({ message, path, type }: ValidationErrorItem) => getLogger('Validate Config').error(path.join('.'), message);
 
+/**
+ * Validates the core configuration.
+ * 
+ * @internal
+ */
 export const validateCoreConfig = (config: CoreConfig): ValidationResult<any> => {
+  if (parseInt(process.versions.node.split('.')[0]) < 18) {
+    getLogger('Validate Config').error('Insufficient node version. Please use a node version of at least 18.');
+    process.exit(1);
+  }
+  
   const validationResult = coreSchema.validate(config, {
     abortEarly: false,
     errors: {

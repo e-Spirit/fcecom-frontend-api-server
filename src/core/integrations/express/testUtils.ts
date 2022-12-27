@@ -1,5 +1,12 @@
+/**
+ * @module
+ * @hidden
+ */
 import { Request, Response } from 'express';
 
+/**
+ * @hidden 
+ */
 export const generateResponseMock = () => {
   const resMock = {
     end: jest.fn(),
@@ -12,6 +19,9 @@ export const generateResponseMock = () => {
   return resMock as Response;
 };
 
+/**
+ * @hidden
+ */
 export const generateRequestMock = () => {
   const reqMock = {
     params: {},

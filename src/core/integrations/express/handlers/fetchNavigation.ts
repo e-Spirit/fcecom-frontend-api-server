@@ -4,14 +4,27 @@ import { getLogger } from "../../../utils/logging/getLogger";
 import { getApi } from '../../../utils/apiSelector';
 import { extractParamsFromRequest } from '../helper';
 
-export interface FetchNavigationParams {
+/**
+ * Parameters to fetch the navigation.
+ *
+ * @export
+ * @interface FetchNavigationParams
+ */
+export type FetchNavigationParams = {
+  /**
+   * Locale to get navigation in.
+   */
   locale: string;
+  /**
+   * Initial path to fetch from.
+   */
   initialPath?: string;
 }
 
 /**
  * Handler to use for the fetchNavigation route.
  *
+ * @internal
  * @param req Express request object.
  * @param res Express response object.
  * @return {*}
@@ -35,4 +48,7 @@ export const fetchNavigation = async (req: Request, res: Response): Promise<Resp
   }
 };
 
+/**
+ * @internal
+ */
 export const FETCH_NAVIGATION_ROUTE = '/fetchNavigation';
