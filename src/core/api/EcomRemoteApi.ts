@@ -2,6 +2,7 @@ import { ComparisonQueryOperatorEnum, FetchResponse, FSXARemoteApi, LogicalQuery
 import { FetchNavigationParams } from '../integrations/express/handlers/fetchNavigation';
 import { FindPageParams } from '../integrations/express/handlers/findPage';
 import { MissingParameterError } from '../utils/errors';
+import { EcomConfig } from '../utils/config';
 
 /**
  * Server module of the Frontend API for Connect for Commerce.
@@ -25,9 +26,8 @@ export class EcomRemoteApi {
    * @return {*} Details about the page.
    */
   async findPage(params: FindPageParams): Promise<FetchResponse> {
-    const { id, locale, type } = params;
+    const { locale, id, type } = params;
     if (typeof id === 'undefined') throw new MissingParameterError('id is undefined');
-    if (typeof locale === 'undefined') throw new MissingParameterError('locale is undefined');
     if (typeof type === 'undefined') throw new MissingParameterError('type is undefined');
 
     return this.fsxaRemoteApi.fetchByFilter({
@@ -48,7 +48,7 @@ export class EcomRemoteApi {
           ],
         },
       ],
-      locale,
+      locale: locale ?? EcomConfig.getDefaultLocale(),
     });
   }
 
@@ -58,10 +58,11 @@ export class EcomRemoteApi {
    * @param params Parameters to use to fetch the service.
    * @return {*} The navigation returned by the navigation service.
    */
-  async fetchNavigation(params: FetchNavigationParams) {
+  async fetchNavigation(params: FetchNavigationParams): Promise<NavigationData | null> {
     const { locale, initialPath } = params;
-    if (typeof locale === 'undefined') throw new MissingParameterError('locale is undefined');
-
-    return this.fsxaRemoteApi.fetchNavigation({ locale, initialPath });
+    return this.fsxaRemoteApi.fetchNavigation({
+      locale: locale ?? EcomConfig.getDefaultLocale(),
+      initialPath,
+    });
   }
 }

@@ -1,11 +1,20 @@
 import joi, { ValidationErrorItem, ValidationResult } from 'joi';
 import { CoreConfig } from './config.meta';
 import { getLogger } from './logging/getLogger';
-
+import {
+  KEY_CONFIG_DESCRIPTION,
+  KEY_CONFIG_LABEL,
+  MASTER_KEY_DESCRIPTION,
+  MASTER_KEY_NAME,
+  PREVIEW_KEY_DESCRIPTION,
+  PREVIEW_KEY_NAME,
+  RELEASE_KEY_DESCRIPTION,
+  RELEASE_KEY_NAME,
+} from './configValidation.data';
 
 /**
  * Schema to validate the server configuration.
- * 
+ *
  * @internal
  */
 export const serverSchema = joi
@@ -17,39 +26,40 @@ export const serverSchema = joi
 
 /**
  * Schema to validate the API key configuration.
- * 
+ *
  * @internal
  */
 export const apiKeySchema = joi
-  .object({
-    master: joi
-      .string()
-      .uuid()
-      .optional()
-      .empty('Master API Key')
-      .description('Master API key for both viewing modes. All non-set apiKeys will default to this one.')
-      .strip(), // disable echo in logs
-    preview: joi
-      .string()
-      .uuid()
-      .required()
-      .label('Preview API Key')
-      .description('The API key of the CaaS instance for preview viewing mode. Leave blank when providing a master key.')
-      .strip(), // disable echo in logs
-    release: joi
-      .string()
-      .uuid()
-      .required()
-      .label('Release API Key')
-      .description('The API key of the CaaS instance for release viewing mode. Leave blank when providing a master key.')
-      .strip(), // disable echo in logs
-  })
-  .label('API Key Config')
-  .description('The API key of the CaaS instance for different viewing modes.');
+  .alternatives(
+    joi.object({
+      // Master key overrides all optional Release / Preview keys.
+      master: joi.string().uuid().required().label(MASTER_KEY_NAME).description(MASTER_KEY_DESCRIPTION).strip(),
+      release: joi.any().optional().label(RELEASE_KEY_NAME).description(RELEASE_KEY_DESCRIPTION).strip(),
+      preview: joi.any().optional().label(PREVIEW_KEY_NAME).description(PREVIEW_KEY_DESCRIPTION).strip(),
+    }),
+    joi.object({
+      // Master key overrides Preview key while having a separate Release key
+      master: joi.string().uuid().required().label(MASTER_KEY_NAME).description(MASTER_KEY_DESCRIPTION).strip(),
+      release: joi.string().uuid().required().label(RELEASE_KEY_NAME).description(RELEASE_KEY_DESCRIPTION).strip(),
+    }),
+    joi.object({
+      // Master key overrides Release key while having a separate Preview key
+      master: joi.string().uuid().required().label(MASTER_KEY_NAME).description(MASTER_KEY_DESCRIPTION).strip(),
+      preview: joi.string().uuid().required().label(PREVIEW_KEY_NAME).description(PREVIEW_KEY_DESCRIPTION).strip(),
+    }),
+    joi.object({
+      // Preview / Release keys are set separately, so no master key is needed.
+      master: joi.any().optional().label(MASTER_KEY_NAME).description(MASTER_KEY_DESCRIPTION),
+      preview: joi.string().uuid().required().label(PREVIEW_KEY_NAME).description(PREVIEW_KEY_DESCRIPTION).strip(),
+      release: joi.string().uuid().required().label(RELEASE_KEY_NAME).description(RELEASE_KEY_DESCRIPTION).strip(),
+    })
+  )
+  .label(KEY_CONFIG_LABEL)
+  .description(KEY_CONFIG_DESCRIPTION);
 
 /**
  * Schema to validate the project configuration.
- * 
+ *
  * @internal
  */
 export const projectSchema = joi
@@ -70,7 +80,7 @@ export const projectSchema = joi
 
 /**
  * Schema to validate the core configuration.
- * 
+ *
  * @internal
  */
 export const coreSchema = joi
@@ -80,6 +90,12 @@ export const coreSchema = joi
       .uri({ allowRelative: false })
       .label('FirstSpirit Server Origin')
       .description('The base URL of the server running the Content Creator.'),
+    defaultLocale: joi
+      .string()
+      .optional()
+      .regex(/^[a-z]{2}_[A-Z]{2}$/) // de_DE
+      .label('Default Locale')
+      .description(`A fallback locale used if any request is received without explicit locale. Has to have format like in 'de_DE'`),
     logLevel: joi
       .number()
       .min(0)
@@ -88,11 +104,12 @@ export const coreSchema = joi
       .description('Numeric representation of logLevels:\nDEBUG = 0, INFO = 1, WARNING = 2, ERROR = 3, NONE = 4'),
     project: projectSchema.required(),
   })
-  .label('Core Config');
+  .label('Core Config')
+  .options({ allowUnknown: true });
 
 /**
  * Schema to validate the configuration.
- * 
+ *
  * @internal
  */
 export const configSchema = joi.object({
@@ -104,7 +121,7 @@ const logConfigProblems = ({ message, path, type }: ValidationErrorItem) => getL
 
 /**
  * Validates the core configuration.
- * 
+ *
  * @internal
  */
 export const validateCoreConfig = (config: CoreConfig): ValidationResult<any> => {
@@ -112,7 +129,7 @@ export const validateCoreConfig = (config: CoreConfig): ValidationResult<any> =>
     getLogger('Validate Config').error('Insufficient node version. Please use a node version of at least 18.');
     process.exit(1);
   }
-  
+
   const validationResult = coreSchema.validate(config, {
     abortEarly: false,
     errors: {

@@ -1,7 +1,7 @@
 import { FSXAContentMode } from 'fsxa-api';
 import { CoreConfig, FSXAConfig } from './config.meta';
 import { Logging, LogLevel } from './logging/Logger';
-import { InvalidConfigurationError } from './errors';
+import { InvalidConfigurationError, MissingDefaultLocaleError } from './errors';
 import { APIProvider } from './APIProvider';
 import cloneDeep from 'lodash.clonedeep';
 import { validateCoreConfig } from './configValidation';
@@ -23,7 +23,7 @@ export namespace EcomConfig {
 
   /**
    * Sets the current configuration.
-   * 
+   *
    * @internal
    * @param config The configuration to set.
    */
@@ -52,7 +52,7 @@ export namespace EcomConfig {
 
   /**
    * Gets the current core configuration.
-   * 
+   *
    * @internal
    * @returns The current core configuration.
    */
@@ -60,7 +60,7 @@ export namespace EcomConfig {
 
   /**
    * Gets the current FSXA configuration.
-   * 
+   *
    * @internal
    * @returns The current configuration for the FSXA API.
    */
@@ -78,5 +78,17 @@ export namespace EcomConfig {
       preview: { ...project, apikey: previewApiKey, contentMode: FSXAContentMode.PREVIEW, logLevel: coreConfig.logLevel },
       release: { ...project, apikey: releaseApiKey, contentMode: FSXAContentMode.RELEASE, logLevel: coreConfig.logLevel },
     };
+  };
+
+  /**
+   *
+   * @internal
+   * @returns The currently configured default locale.
+   * @Trows MissingDefaultLocaleError If no default locale is configured.
+   */
+  export const getDefaultLocale = () => {
+    const { defaultLocale } = getCoreConfig();
+    if (typeof defaultLocale === 'undefined') throw new MissingDefaultLocaleError('locale is undefined and no fallback is available');
+    return defaultLocale;
   };
 }

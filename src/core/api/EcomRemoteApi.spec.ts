@@ -2,6 +2,8 @@ import { ComparisonQueryOperatorEnum, FSXARemoteApi, FSXARemoteApiConfig, Logica
 import { EcomRemoteApi } from './EcomRemoteApi';
 import { FetchNavigationParams } from '../integrations/express/handlers/fetchNavigation';
 import { FindPageParams } from '../integrations/express/handlers/findPage';
+import { EcomConfig } from '../utils/config';
+import { coreConfig } from '../utils/config.spec.data';
 
 const config = {
   apikey: 'APIKEY',
@@ -46,12 +48,14 @@ describe('EcomRemoteApi', () => {
       }).rejects.toThrowError('id is undefined');
       expect(spy).not.toHaveBeenCalled();
     });
-    it('throws an error if parameter "locale" is missing', async () => {
+    it('throws an error if parameter "locale" is missing and no fallback is configured', async () => {
       // Arrange
       const fsxaRemoteApi = new FSXARemoteApi(config);
       const fetchByFilterResult = {};
       const spy = (fsxaRemoteApi.fetchByFilter = jest.fn().mockResolvedValue(fetchByFilterResult));
       const api = new EcomRemoteApi(fsxaRemoteApi);
+
+      EcomConfig.setConfig({ ...coreConfig, defaultLocale: undefined });
 
       const params = {
         id: '123',
@@ -62,8 +66,30 @@ describe('EcomRemoteApi', () => {
       expect(async () => {
         return api.findPage(params);
         // Assert
-      }).rejects.toThrowError('locale is undefined');
+      }).rejects.toThrowError('locale is undefined and no fallback is available');
       expect(spy).not.toHaveBeenCalled();
+    });
+    it('proceeds if parameter "locale" is missing but a fallback is configured', async () => {
+      // Arrange
+      const fsxaRemoteApi = new FSXARemoteApi(config);
+      const fetchByFilterResult = {};
+      const spy = (fsxaRemoteApi.fetchByFilter = jest.fn().mockResolvedValue(fetchByFilterResult));
+      const api = new EcomRemoteApi(fsxaRemoteApi);
+
+      EcomConfig.setConfig(coreConfig);
+
+      const params = {
+        id: '123',
+        locale: undefined,
+        type: 'product',
+      } as any as FindPageParams;
+
+      // Act
+      await api.findPage(params);
+
+      // Assert
+      expect(EcomConfig.getCoreConfig().defaultLocale).toBe('de_DE');
+      expect(spy).toHaveBeenCalled();
     });
     it('throws an error if parameter "type" is missing', async () => {
       // Arrange
@@ -129,12 +155,14 @@ describe('EcomRemoteApi', () => {
   });
 
   describe('fetchNavigation()', () => {
-    it('throws an error if parameter "locale" is missing', async () => {
+    it('throws an error if parameter "locale" is missing and no fallback is configured', async () => {
       // Arrange
       const fsxaRemoteApi = new FSXARemoteApi(config);
       const fetchNavigationResult = {};
       const spy = (fsxaRemoteApi.fetchNavigation = jest.fn().mockResolvedValue(fetchNavigationResult));
       const api = new EcomRemoteApi(fsxaRemoteApi);
+
+      EcomConfig.setConfig({ ...coreConfig, defaultLocale: undefined });
 
       const params = {
         initialPath: 'path',
@@ -143,8 +171,29 @@ describe('EcomRemoteApi', () => {
       // Act
       expect(async () => {
         return api.fetchNavigation(params);
-      }).rejects.toThrowError('locale is undefined');
+      }).rejects.toThrowError('locale is undefined and no fallback is available');
       expect(spy).not.toHaveBeenCalled();
+    });
+    it('proceeds if parameter "locale" is missing but a fallback is configured', async () => {
+      // Arrange
+      const fsxaRemoteApi = new FSXARemoteApi(config);
+      const fetchNavigationResult = {};
+      const spy = (fsxaRemoteApi.fetchNavigation = jest.fn().mockResolvedValue(fetchNavigationResult));
+      const api = new EcomRemoteApi(fsxaRemoteApi);
+
+      EcomConfig.setConfig(coreConfig);
+
+      const params = {
+        initialPath: 'path',
+        locale: undefined,
+      } as any as FetchNavigationParams;
+
+      // Act
+      await api.fetchNavigation(params);
+
+      // Assert
+      expect(EcomConfig.getCoreConfig().defaultLocale).toBe('de_DE');
+      expect(spy).toHaveBeenCalled();
     });
     it('uses FSXA API instance to fetch the navigation', async () => {
       // Arrange

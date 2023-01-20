@@ -6,6 +6,7 @@ import { CoreConfig } from './config.meta';
  */
 export const coreConfig = {
   fsServerOrigin: 'https://example.org/FSServerOrigin',
+  defaultLocale: 'de_DE',
   logLevel: LogLevel.DEBUG,
   project: {
     apiKey: {

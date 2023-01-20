@@ -17,8 +17,9 @@ export type FindPageParams = {
   id: string;
   /**
    * Locale to get the page in.
+   * If omitted, a default locale has to be provided.
    */
-  locale: string;
+  locale?: string;
   /**
    * Type of the page.
    */
@@ -44,7 +45,8 @@ export const findPage = async (req: Request<any, any>, res: Response): Promise<R
     logger.error('Unable to find page', err);
     if (err instanceof Error) {
       // TODO: Implement instanceof check · Ticket: FCECOM-503
-      if (err.name === 'MissingParameterError') return res.status(400).json({ error: err.message });
+      if (err.name === 'MissingDefaultLocaleError') return res.status(400).json({ error: err.message });
+      else if (err.name === 'MissingParameterError') return res.status(400).json({ error: err.message });
       else if (err.message === FSXAApiErrors.NOT_FOUND) return res.status(404).send();
       else if (err.message === FSXAApiErrors.NOT_AUTHORIZED) return res.status(401).send();
     }

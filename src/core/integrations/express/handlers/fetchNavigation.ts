@@ -13,8 +13,9 @@ import { extractParamsFromRequest } from '../helper';
 export type FetchNavigationParams = {
   /**
    * Locale to get navigation in.
+   * If omitted, a default locale has to be provided.
    */
-  locale: string;
+  locale?: string;
   /**
    * Initial path to fetch from.
    */
@@ -40,7 +41,8 @@ export const fetchNavigation = async (req: Request, res: Response): Promise<Resp
     logger.error('Unable to fetch navigation', err);
     if (err instanceof Error) {
       // TODO: Implement instanceof check · Ticket: FCECOM-503
-      if (err.name === 'MissingParameterError') return res.status(400).json({ error: err.message });
+      if (err.name === 'MissingDefaultLocaleError') return res.status(400).json({ error: err.message });
+      else if (err.name === 'MissingParameterError') return res.status(400).json({ error: err.message });
       else if (err.message === FSXAApiErrors.NOT_FOUND) return res.status(404).send();
       else if (err.message === FSXAApiErrors.NOT_AUTHORIZED) return res.status(401).send();
     }

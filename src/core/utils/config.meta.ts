@@ -73,6 +73,11 @@ export type CoreConfig = {
   fsServerOrigin: string;
 
   /**
+   * A fallback locale used if any request is received without explicit locale. Has to have format like in 'de_DE'
+   */
+  defaultLocale?: string;
+
+  /**
    * <b>0</b>: DEBUG<br><b>1</b>: INFO<br><b>2</b>: WARNING<br><b>3</b>: ERROR<br><b>4</b>: NONE<br>
    */
   logLevel: LogLevel;

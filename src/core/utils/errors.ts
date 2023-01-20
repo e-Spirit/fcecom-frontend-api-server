@@ -15,6 +15,17 @@ export class MissingParameterError extends Error {
 }
 
 /**
+ * Error to represent a missing default locale configuration.
+ *
+ * @export
+ * @class MissingDefaultLocaleError
+ * @internal
+ */
+export class MissingDefaultLocaleError extends Error {
+  public readonly name = 'MissingDefaultLocaleError';
+}
+
+/**
  * Error to represent an invalid configuration.
  *
  * @export
