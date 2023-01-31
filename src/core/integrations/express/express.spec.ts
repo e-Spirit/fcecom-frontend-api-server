@@ -1,5 +1,5 @@
 import { getEcomEndpoints } from './express';
-import { fallbackHandler, FETCH_NAVIGATION_ROUTE, fetchNavigation, FIND_PAGE_ROUTE, findPage, IS_PREVIEW_ROUTE, isPreview } from './handlers';
+import { fallbackHandler, FETCH_NAVIGATION_ROUTE, fetchNavigation, FIND_PAGE_ROUTE, findPage, IS_PREVIEW_ROUTE, isPreview, FIND_ELEMENT_ROUTE, findElement } from './handlers';
 import { coreConfig } from "../../utils/config.spec.data";
 
 const routerMock = {
@@ -30,6 +30,7 @@ describe('express integration', () => {
       expect(routerMock.use).toBeCalledWith(expressJsonMock);
       expect(routerMock.get).toBeCalledWith(FIND_PAGE_ROUTE, findPage);
       expect(routerMock.get).toBeCalledWith(FETCH_NAVIGATION_ROUTE, fetchNavigation);
+      expect(routerMock.get).toBeCalledWith(FIND_ELEMENT_ROUTE, findElement);
       expect(routerMock.get).toBeCalledWith(IS_PREVIEW_ROUTE, isPreview);
       expect(routerMock.all).toBeCalledWith('*', fallbackHandler);
     });

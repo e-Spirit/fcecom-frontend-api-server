@@ -3,6 +3,7 @@ import { FetchNavigationParams } from '../integrations/express/handlers/fetchNav
 import { FindPageParams } from '../integrations/express/handlers/findPage';
 import { MissingParameterError } from '../utils/errors';
 import { EcomConfig } from '../utils/config';
+import { FindElementParams } from '../integrations/express/handlers/findElement';
 
 /**
  * Server module of the Frontend API for Connect for Commerce.
@@ -63,6 +64,22 @@ export class EcomRemoteApi {
     return this.fsxaRemoteApi.fetchNavigation({
       locale: locale ?? EcomConfig.getDefaultLocale(),
       initialPath,
+    });
+  }
+
+  /**
+   * Looks up an element from the CaaS.
+   *
+   * @param params Parameters to use to find the element.
+   * @return {*} Details about the element.
+   */
+  async findElement(params: FindElementParams): Promise<any> {
+    const { locale, id } = params;
+    if (typeof id === 'undefined') throw new MissingParameterError('id is undefined');
+
+    return this.fsxaRemoteApi.fetchElement({
+      id,
+      locale: locale ?? EcomConfig.getDefaultLocale(),
     });
   }
 }
