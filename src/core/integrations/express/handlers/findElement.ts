@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
 import { getApi } from '../../../utils/apiSelector';
-import { FSXAApiErrors } from 'fsxa-api';
-import { getLogger } from "../../../utils/logging/getLogger";
+import { getLogger } from '../../../utils/logging/getLogger';
 import { extractParamsFromRequest } from '../helper';
+import { ItemNotFoundError, MissingDefaultLocaleError, MissingParameterError, UnauthorizedError } from '../../../utils/errors';
 
 /**
  * Parameters used to find an element.
@@ -20,7 +20,7 @@ export type FindElementParams = {
    * If omitted, a default locale has to be provided.
    */
   locale?: string;
-}
+};
 
 /**
  * Handler to use for the findElement route.
@@ -39,12 +39,12 @@ export const findElement = async (req: Request<any, any>, res: Response): Promis
     return res.json(await getApi(req).findElement(extractParamsFromRequest<FindElementParams>(req)));
   } catch (err: unknown) {
     logger.error('Unable to find element', err);
-    if (err instanceof Error) {
-      // TODO: Implement instanceof check · Ticket: FCECOM-503
-      if (err.name === 'MissingDefaultLocaleError') return res.status(400).json({ error: err.message });
-      else if (err.name === 'MissingParameterError') return res.status(400).json({ error: err.message });
-      else if (err.message === FSXAApiErrors.NOT_FOUND) return res.status(404).send();
-      else if (err.message === FSXAApiErrors.NOT_AUTHORIZED) return res.status(401).send();
+    if (err instanceof UnauthorizedError) {
+      return res.status(401).send();
+    } else if (err instanceof ItemNotFoundError) {
+      return res.status(404).send();
+    } else if (err instanceof MissingDefaultLocaleError || err instanceof MissingParameterError) {
+      return res.status(400).json({ error: err.message });
     }
     return res.status(500).send();
   }

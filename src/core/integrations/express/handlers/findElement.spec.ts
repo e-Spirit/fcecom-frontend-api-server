@@ -1,4 +1,4 @@
-import { MissingParameterError } from '../../../utils/errors';
+import { ItemNotFoundError, MissingParameterError, UnauthorizedError } from '../../../utils/errors';
 import { Logger, Logging, LogLevel } from '../../../utils/logging/Logger';
 import { generateRequestMock, generateResponseMock } from '../testUtils';
 import { findElement } from './findElement';
@@ -64,7 +64,7 @@ describe('findElement', () => {
     // Arrange
     const resMock = generateResponseMock();
     const reqMock = generateRequestMock();
-    const error = new Error('Resource could not be found');
+    const error = new ItemNotFoundError('Not found');
     findElementMock.mockImplementation(() => {
       throw error;
     });
@@ -80,7 +80,7 @@ describe('findElement', () => {
     // Arrange
     const resMock = generateResponseMock();
     const reqMock = generateRequestMock();
-    const error = new Error('Your passed ApiKey has no access to the requested resource');
+    const error = new UnauthorizedError('Not authorized');
     findElementMock.mockImplementation(() => {
       throw error;
     });

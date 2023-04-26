@@ -1,4 +1,4 @@
-import { MissingParameterError } from '../../../utils/errors';
+import { ItemNotFoundError, MissingParameterError, UnauthorizedError } from '../../../utils/errors';
 import { Logger, Logging, LogLevel } from '../../../utils/logging/Logger';
 import { generateRequestMock, generateResponseMock } from '../testUtils';
 import { fetchNavigation } from './fetchNavigation';
@@ -64,7 +64,7 @@ describe('fetchNavigation', () => {
     // Arrange
     const resMock = generateResponseMock();
     const reqMock = generateRequestMock();
-    const error = new Error('Resource could not be found');
+    const error = new ItemNotFoundError('Not found');
     fetchNavigationMock.mockImplementation(() => {
       throw error;
     });
@@ -80,7 +80,7 @@ describe('fetchNavigation', () => {
     // Arrange
     const resMock = generateResponseMock();
     const reqMock = generateRequestMock();
-    const error = new Error('Your passed ApiKey has no access to the requested resource');
+    const error = new UnauthorizedError('Not authorized');
     fetchNavigationMock.mockImplementation(() => {
       throw error;
     });

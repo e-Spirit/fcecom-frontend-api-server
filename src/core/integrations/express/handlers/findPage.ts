@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
 import { getApi } from '../../../utils/apiSelector';
-import { FSXAApiErrors } from 'fsxa-api';
-import { getLogger } from "../../../utils/logging/getLogger";
+import { getLogger } from '../../../utils/logging/getLogger';
 import { extractParamsFromRequest } from '../helper';
+import { ItemNotFoundError, MissingDefaultLocaleError, MissingParameterError, UnauthorizedError } from '../../../utils/errors';
 
 /**
  * Parameters used to find a page.
@@ -24,7 +24,7 @@ export type FindPageParams = {
    * Type of the page.
    */
   type: string;
-}
+};
 
 /**
  * Handler to use for the findPage route.
@@ -43,12 +43,12 @@ export const findPage = async (req: Request<any, any>, res: Response): Promise<R
     return res.json(await getApi(req).findPage(extractParamsFromRequest<FindPageParams>(req)));
   } catch (err: unknown) {
     logger.error('Unable to find page', err);
-    if (err instanceof Error) {
-      // TODO: Implement instanceof check · Ticket: FCECOM-503
-      if (err.name === 'MissingDefaultLocaleError') return res.status(400).json({ error: err.message });
-      else if (err.name === 'MissingParameterError') return res.status(400).json({ error: err.message });
-      else if (err.message === FSXAApiErrors.NOT_FOUND) return res.status(404).send();
-      else if (err.message === FSXAApiErrors.NOT_AUTHORIZED) return res.status(401).send();
+    if (err instanceof UnauthorizedError) {
+      return res.status(401).send();
+    } else if (err instanceof ItemNotFoundError) {
+      return res.status(404).send();
+    } else if (err instanceof MissingDefaultLocaleError || err instanceof MissingParameterError) {
+      return res.status(400).json({ error: err.message });
     }
     return res.status(500).send();
   }

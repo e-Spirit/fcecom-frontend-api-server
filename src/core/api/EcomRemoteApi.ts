@@ -1,7 +1,7 @@
-import { ComparisonQueryOperatorEnum, FetchResponse, FSXARemoteApi, LogicalQueryOperatorEnum, NavigationData } from 'fsxa-api';
+import { ComparisonQueryOperatorEnum, FetchResponse, FSXAApiErrors, FSXARemoteApi, LogicalQueryOperatorEnum, NavigationData } from 'fsxa-api';
 import { FetchNavigationParams } from '../integrations/express/handlers/fetchNavigation';
 import { FindPageParams } from '../integrations/express/handlers/findPage';
-import { MissingParameterError } from '../utils/errors';
+import { ItemNotFoundError, MissingParameterError, UnauthorizedError, UnknownError } from '../utils/errors';
 import { EcomConfig } from '../utils/config';
 import { FindElementParams } from '../integrations/express/handlers/findElement';
 
@@ -27,30 +27,41 @@ export class EcomRemoteApi {
    * @return {*} Details about the page.
    */
   async findPage(params: FindPageParams): Promise<FetchResponse> {
-    const { locale, id, type } = params;
+    const { locale = EcomConfig.getDefaultLocale(), id, type } = params;
     if (typeof id === 'undefined') throw new MissingParameterError('id is undefined');
     if (typeof type === 'undefined') throw new MissingParameterError('type is undefined');
 
-    return this.fsxaRemoteApi.fetchByFilter({
-      filters: [
-        {
-          operator: LogicalQueryOperatorEnum.AND,
-          filters: [
-            {
-              field: 'page.formData.type.value',
-              operator: ComparisonQueryOperatorEnum.EQUALS,
-              value: type,
-            },
-            {
-              field: 'page.formData.id.value',
-              operator: ComparisonQueryOperatorEnum.EQUALS,
-              value: id,
-            },
-          ],
-        },
-      ],
-      locale: locale ?? EcomConfig.getDefaultLocale(),
-    });
+    try {
+      return await this.fsxaRemoteApi.fetchByFilter({
+        filters: [
+          {
+            operator: LogicalQueryOperatorEnum.AND,
+            filters: [
+              {
+                field: 'page.formData.type.value',
+                operator: ComparisonQueryOperatorEnum.EQUALS,
+                value: type,
+              },
+              {
+                field: 'page.formData.id.value',
+                operator: ComparisonQueryOperatorEnum.EQUALS,
+                value: id,
+              },
+            ],
+          },
+        ],
+        locale,
+      });
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        if (err.message === FSXAApiErrors.NOT_FOUND) {
+          throw new ItemNotFoundError('Failed to find page - not found');
+        } else if (err.message === FSXAApiErrors.NOT_AUTHORIZED) {
+          throw new UnauthorizedError('Failed to find page - unauthorized');
+        }
+      }
+      throw new UnknownError('Failed to find page');
+    }
   }
 
   /**
@@ -60,11 +71,22 @@ export class EcomRemoteApi {
    * @return {*} The navigation returned by the navigation service.
    */
   async fetchNavigation(params: FetchNavigationParams): Promise<NavigationData | null> {
-    const { locale, initialPath } = params;
-    return this.fsxaRemoteApi.fetchNavigation({
-      locale: locale ?? EcomConfig.getDefaultLocale(),
-      initialPath,
-    });
+    const { locale = EcomConfig.getDefaultLocale(), initialPath } = params;
+    try {
+      return await this.fsxaRemoteApi.fetchNavigation({
+        initialPath,
+        locale,
+      });
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        if (err.message === FSXAApiErrors.NOT_FOUND) {
+          throw new ItemNotFoundError('Failed to fetch navigation - not found');
+        } else if (err.message === FSXAApiErrors.NOT_AUTHORIZED) {
+          throw new UnauthorizedError('Failed to fetch navigation - unauthorized');
+        }
+      }
+      throw new UnknownError('Failed to fetch navigation');
+    }
   }
 
   /**
@@ -74,12 +96,23 @@ export class EcomRemoteApi {
    * @return {*} Details about the element.
    */
   async findElement(params: FindElementParams): Promise<any> {
-    const { locale, id } = params;
+    const { locale = EcomConfig.getDefaultLocale(), id } = params;
     if (typeof id === 'undefined') throw new MissingParameterError('id is undefined');
 
-    return this.fsxaRemoteApi.fetchElement({
-      id,
-      locale: locale ?? EcomConfig.getDefaultLocale(),
-    });
+    try {
+      return await this.fsxaRemoteApi.fetchElement({
+        id,
+        locale: locale,
+      });
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        if (err.message === FSXAApiErrors.NOT_FOUND) {
+          throw new ItemNotFoundError('Failed to find element - not found');
+        } else if (err.message === FSXAApiErrors.NOT_AUTHORIZED) {
+          throw new UnauthorizedError('Failed to find element - unauthorized');
+        }
+      }
+      throw new UnknownError('Failed to find element');
+    }
   }
 }

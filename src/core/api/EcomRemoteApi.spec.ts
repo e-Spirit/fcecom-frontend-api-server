@@ -1,9 +1,11 @@
-import { ComparisonQueryOperatorEnum, FSXARemoteApi, FSXARemoteApiConfig, LogicalQueryOperatorEnum } from 'fsxa-api';
+import { ComparisonQueryOperatorEnum, FSXAApiErrors, FSXARemoteApi, FSXARemoteApiConfig, FetchElementParams, LogicalQueryOperatorEnum } from 'fsxa-api';
 import { EcomRemoteApi } from './EcomRemoteApi';
 import { FetchNavigationParams } from '../integrations/express/handlers/fetchNavigation';
 import { FindPageParams } from '../integrations/express/handlers/findPage';
 import { EcomConfig } from '../utils/config';
 import { coreConfig } from '../utils/config.spec.data';
+import { FindElementParams } from '../integrations/express/handlers/findElement';
+import { ItemNotFoundError, UnauthorizedError, UnknownError } from '../utils/errors';
 
 const config = {
   apikey: 'APIKEY',
@@ -152,6 +154,75 @@ describe('EcomRemoteApi', () => {
         })
       );
     });
+    it('throws an error if FSXA throws 404', async () => {
+      expect.assertions(3);
+      // Arrange
+      const fsxaRemoteApi = new FSXARemoteApi(config);
+      const error = new Error(FSXAApiErrors.NOT_FOUND);
+      const spy = (fsxaRemoteApi.fetchByFilter = jest.fn().mockRejectedValue(error));
+      const api = new EcomRemoteApi(fsxaRemoteApi);
+
+      const params = {
+        id: '123',
+        locale: 'de',
+        type: 'product',
+      } as FindPageParams;
+      // Act
+      try {
+        await api.findPage(params);
+      } catch (err: any) {
+        // Assert
+        expect(spy).toHaveBeenCalled();
+        expect(err).toBeInstanceOf(ItemNotFoundError);
+        expect(err.message).toEqual('Failed to find page - not found');
+      }
+    });
+    it('throws an error if FSXA throws 401', async () => {
+      expect.assertions(3);
+      // Arrange
+      const fsxaRemoteApi = new FSXARemoteApi(config);
+      const error = new Error(FSXAApiErrors.NOT_AUTHORIZED);
+      const spy = (fsxaRemoteApi.fetchByFilter = jest.fn().mockRejectedValue(error));
+      const api = new EcomRemoteApi(fsxaRemoteApi);
+
+      const params = {
+        id: '123',
+        locale: 'de',
+        type: 'product',
+      } as FindPageParams;
+      // Act
+      try {
+        await api.findPage(params);
+      } catch (err: any) {
+        // Assert
+        expect(spy).toHaveBeenCalled();
+        expect(err).toBeInstanceOf(UnauthorizedError);
+        expect(err.message).toEqual('Failed to find page - unauthorized');
+      }
+    });
+    it('throws an error if FSXA throws unkown error', async () => {
+      expect.assertions(3);
+      // Arrange
+      const fsxaRemoteApi = new FSXARemoteApi(config);
+      const error = new Error('UNKNOWN ERROR');
+      const spy = (fsxaRemoteApi.fetchByFilter = jest.fn().mockRejectedValue(error));
+      const api = new EcomRemoteApi(fsxaRemoteApi);
+
+      const params = {
+        id: '123',
+        locale: 'de',
+        type: 'product',
+      } as FindPageParams;
+      // Act
+      try {
+        await api.findPage(params);
+      } catch (err: any) {
+        // Assert
+        expect(spy).toHaveBeenCalled();
+        expect(err).toBeInstanceOf(UnknownError);
+        expect(err.message).toEqual('Failed to find page');
+      }
+    });
   });
 
   describe('fetchNavigation()', () => {
@@ -218,6 +289,205 @@ describe('EcomRemoteApi', () => {
           initialPath: params.initialPath,
         })
       );
+    });
+    it('throws an error if FSXA throws 404', async () => {
+      expect.assertions(3);
+      // Arrange
+      const fsxaRemoteApi = new FSXARemoteApi(config);
+      const error = new Error(FSXAApiErrors.NOT_FOUND);
+      const spy = (fsxaRemoteApi.fetchNavigation = jest.fn().mockRejectedValue(error));
+      const api = new EcomRemoteApi(fsxaRemoteApi);
+
+      const params = {
+        initialPath: 'path',
+        locale: 'de',
+      } as FetchNavigationParams;
+      // Act
+      try {
+        await api.fetchNavigation(params);
+      } catch (err: any) {
+        // Assert
+        expect(spy).toHaveBeenCalled();
+        expect(err).toBeInstanceOf(ItemNotFoundError);
+        expect(err.message).toEqual('Failed to fetch navigation - not found');
+      }
+    });
+    it('throws an error if FSXA throws 401', async () => {
+      expect.assertions(3);
+      // Arrange
+      const fsxaRemoteApi = new FSXARemoteApi(config);
+      const error = new Error(FSXAApiErrors.NOT_AUTHORIZED);
+      const spy = (fsxaRemoteApi.fetchNavigation = jest.fn().mockRejectedValue(error));
+      const api = new EcomRemoteApi(fsxaRemoteApi);
+
+      const params = {
+        initialPath: 'path',
+        locale: 'de',
+      } as FetchNavigationParams;
+      // Act
+      try {
+        await api.fetchNavigation(params);
+      } catch (err: any) {
+        // Assert
+        expect(spy).toHaveBeenCalled();
+        expect(err).toBeInstanceOf(UnauthorizedError);
+        expect(err.message).toEqual('Failed to fetch navigation - unauthorized');
+      }
+    });
+    it('throws an error if FSXA throws unkown error', async () => {
+      expect.assertions(3);
+      // Arrange
+      const fsxaRemoteApi = new FSXARemoteApi(config);
+      const error = new Error('UNKNOWN ERROR');
+      const spy = (fsxaRemoteApi.fetchNavigation = jest.fn().mockRejectedValue(error));
+      const api = new EcomRemoteApi(fsxaRemoteApi);
+
+      const params = {
+        initialPath: 'path',
+        locale: 'de',
+      } as FetchNavigationParams;
+      // Act
+      try {
+        await api.fetchNavigation(params);
+      } catch (err: any) {
+        // Assert
+        expect(spy).toHaveBeenCalled();
+        expect(err).toBeInstanceOf(UnknownError);
+        expect(err.message).toEqual('Failed to fetch navigation');
+      }
+    });
+  });
+
+  describe('findElement()', () => {
+    it('throws an error if parameter "locale" is missing and no fallback is configured', async () => {
+      // Arrange
+      const fsxaRemoteApi = new FSXARemoteApi(config);
+      const fetchElementResult = {};
+      const spy = (fsxaRemoteApi.fetchElement = jest.fn().mockResolvedValue(fetchElementResult));
+      const api = new EcomRemoteApi(fsxaRemoteApi);
+
+      EcomConfig.setConfig({ ...coreConfig, defaultLocale: undefined });
+
+      const params = {
+        id: '123',
+        locale: undefined,
+      } as any as FindElementParams;
+      // Act
+      expect(async () => {
+        return api.findElement(params);
+      }).rejects.toThrowError('locale is undefined and no fallback is available');
+      expect(spy).not.toHaveBeenCalled();
+    });
+    it('proceeds if parameter "locale" is missing but a fallback is configured', async () => {
+      // Arrange
+      const fsxaRemoteApi = new FSXARemoteApi(config);
+      const fetchElementResult = {};
+      const spy = (fsxaRemoteApi.fetchElement = jest.fn().mockResolvedValue(fetchElementResult));
+      const api = new EcomRemoteApi(fsxaRemoteApi);
+
+      EcomConfig.setConfig(coreConfig);
+
+      const params = {
+        id: '213',
+        locale: undefined,
+      } as any as FindElementParams;
+
+      // Act
+      await api.findElement(params);
+
+      // Assert
+      expect(EcomConfig.getCoreConfig().defaultLocale).toBe('de_DE');
+      expect(spy).toHaveBeenCalled();
+    });
+    it('uses FSXA API instance to fetch the navigation', async () => {
+      // Arrange
+      const fsxaRemoteApi = new FSXARemoteApi(config);
+      const fetchElementResult = {};
+      const spy = (fsxaRemoteApi.fetchElement = jest.fn().mockResolvedValue(fetchElementResult));
+      const api = new EcomRemoteApi(fsxaRemoteApi);
+
+      // Act
+      const params = {
+        id: '213',
+        locale: 'de',
+      } as FetchElementParams;
+      const result = await api.findElement(params);
+
+      // Assert
+      expect(result).toBe(fetchElementResult);
+      expect(spy).toHaveBeenNthCalledWith(
+        1,
+        expect.objectContaining({
+          locale: params.locale,
+          id: params.id,
+        })
+      );
+    });
+    it('throws an error if FSXA throws 404', async () => {
+      expect.assertions(3);
+      // Arrange
+      const fsxaRemoteApi = new FSXARemoteApi(config);
+      const error = new Error(FSXAApiErrors.NOT_FOUND);
+      const spy = (fsxaRemoteApi.fetchElement = jest.fn().mockRejectedValue(error));
+      const api = new EcomRemoteApi(fsxaRemoteApi);
+
+      const params = {
+        id: '123',
+        locale: 'de',
+      } as FindElementParams;
+      // Act
+      try {
+        await api.findElement(params);
+      } catch (err: any) {
+        // Assert
+        expect(spy).toHaveBeenCalled();
+        expect(err).toBeInstanceOf(ItemNotFoundError);
+        expect(err.message).toEqual('Failed to find element - not found');
+      }
+    });
+    it('throws an error if FSXA throws 401', async () => {
+      expect.assertions(3);
+      // Arrange
+      const fsxaRemoteApi = new FSXARemoteApi(config);
+      const error = new Error(FSXAApiErrors.NOT_AUTHORIZED);
+      const spy = (fsxaRemoteApi.fetchElement = jest.fn().mockRejectedValue(error));
+      const api = new EcomRemoteApi(fsxaRemoteApi);
+
+      const params = {
+        id: '123',
+        locale: 'de',
+      } as FindElementParams;
+      // Act
+      try {
+        await api.findElement(params);
+      } catch (err: any) {
+        // Assert
+        expect(spy).toHaveBeenCalled();
+        expect(err).toBeInstanceOf(UnauthorizedError);
+        expect(err.message).toEqual('Failed to find element - unauthorized');
+      }
+    });
+    it('throws an error if FSXA throws unkown error', async () => {
+      expect.assertions(3);
+      // Arrange
+      const fsxaRemoteApi = new FSXARemoteApi(config);
+      const error = new Error('UNKNOWN ERROR');
+      const spy = (fsxaRemoteApi.fetchElement = jest.fn().mockRejectedValue(error));
+      const api = new EcomRemoteApi(fsxaRemoteApi);
+
+      const params = {
+        id: '123',
+        locale: 'de',
+      } as FindElementParams;
+      // Act
+      try {
+        await api.findElement(params);
+      } catch (err: any) {
+        // Assert
+        expect(spy).toHaveBeenCalled();
+        expect(err).toBeInstanceOf(UnknownError);
+        expect(err.message).toEqual('Failed to find element');
+      }
     });
   });
 });
