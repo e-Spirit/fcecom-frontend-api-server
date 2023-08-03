@@ -96,12 +96,12 @@ export class EcomRemoteApi {
    * @return {*} Details about the element.
    */
   async findElement(params: FindElementParams): Promise<any> {
-    const { locale = EcomConfig.getDefaultLocale(), id } = params;
-    if (typeof id === 'undefined') throw new MissingParameterError('id is undefined');
+    const { locale = EcomConfig.getDefaultLocale(), fsPageId } = params;
+    if (typeof fsPageId === 'undefined') throw new MissingParameterError('fsPageId is undefined');
 
     try {
       return await this.fsxaRemoteApi.fetchElement({
-        id,
+        id: fsPageId,
         locale: locale,
       });
     } catch (err: unknown) {

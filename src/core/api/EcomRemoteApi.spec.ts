@@ -1,4 +1,4 @@
-import { ComparisonQueryOperatorEnum, FSXAApiErrors, FSXARemoteApi, FSXARemoteApiConfig, FetchElementParams, LogicalQueryOperatorEnum } from 'fsxa-api';
+import { ComparisonQueryOperatorEnum, FSXAApiErrors, FSXARemoteApi, FSXARemoteApiConfig, LogicalQueryOperatorEnum } from 'fsxa-api';
 import { EcomRemoteApi } from './EcomRemoteApi';
 import { FetchNavigationParams } from '../integrations/express/handlers/fetchNavigation';
 import { FindPageParams } from '../integrations/express/handlers/findPage';
@@ -131,27 +131,27 @@ describe('EcomRemoteApi', () => {
       // Assert
       expect(result).toBe(fetchByFilterResult);
       expect(spy).toHaveBeenNthCalledWith(
-        1,
-        expect.objectContaining({
-          filters: [
-            {
-              operator: LogicalQueryOperatorEnum.AND,
-              filters: [
-                {
-                  field: 'page.formData.type.value',
-                  operator: ComparisonQueryOperatorEnum.EQUALS,
-                  value: params.type,
-                },
-                {
-                  field: 'page.formData.id.value',
-                  operator: ComparisonQueryOperatorEnum.EQUALS,
-                  value: params.id,
-                },
-              ],
-            },
-          ],
-          locale: params.locale,
-        })
+          1,
+          expect.objectContaining({
+            filters: [
+              {
+                operator: LogicalQueryOperatorEnum.AND,
+                filters: [
+                  {
+                    field: 'page.formData.type.value',
+                    operator: ComparisonQueryOperatorEnum.EQUALS,
+                    value: params.type,
+                  },
+                  {
+                    field: 'page.formData.id.value',
+                    operator: ComparisonQueryOperatorEnum.EQUALS,
+                    value: params.id,
+                  },
+                ],
+              },
+            ],
+            locale: params.locale,
+          })
       );
     });
     it('throws an error if FSXA throws 404', async () => {
@@ -283,11 +283,11 @@ describe('EcomRemoteApi', () => {
       // Assert
       expect(result).toBe(fetchNavigationResult);
       expect(spy).toHaveBeenNthCalledWith(
-        1,
-        expect.objectContaining({
-          locale: params.locale,
-          initialPath: params.initialPath,
-        })
+          1,
+          expect.objectContaining({
+            locale: params.locale,
+            initialPath: params.initialPath,
+          })
       );
     });
     it('throws an error if FSXA throws 404', async () => {
@@ -344,7 +344,7 @@ describe('EcomRemoteApi', () => {
 
       const params = {
         initialPath: 'path',
-        locale: 'de',
+        locale: 'de_DE',
       } as FetchNavigationParams;
       // Act
       try {
@@ -369,7 +369,7 @@ describe('EcomRemoteApi', () => {
       EcomConfig.setConfig({ ...coreConfig, defaultLocale: undefined });
 
       const params = {
-        id: '123',
+        fsPageId: '123',
         locale: undefined,
       } as any as FindElementParams;
       // Act
@@ -388,7 +388,7 @@ describe('EcomRemoteApi', () => {
       EcomConfig.setConfig(coreConfig);
 
       const params = {
-        id: '213',
+        fsPageId: '213',
         locale: undefined,
       } as any as FindElementParams;
 
@@ -408,19 +408,19 @@ describe('EcomRemoteApi', () => {
 
       // Act
       const params = {
-        id: '213',
-        locale: 'de',
-      } as FetchElementParams;
+        fsPageId: '213',
+        locale: 'de_DE',
+      } as FindElementParams;
       const result = await api.findElement(params);
 
       // Assert
       expect(result).toBe(fetchElementResult);
       expect(spy).toHaveBeenNthCalledWith(
-        1,
-        expect.objectContaining({
-          locale: params.locale,
-          id: params.id,
-        })
+          1,
+          expect.objectContaining({
+            locale: params.locale,
+            id: params.fsPageId,
+          })
       );
     });
     it('throws an error if FSXA throws 404', async () => {
@@ -432,8 +432,8 @@ describe('EcomRemoteApi', () => {
       const api = new EcomRemoteApi(fsxaRemoteApi);
 
       const params = {
-        id: '123',
-        locale: 'de',
+        fsPageId: '123',
+        locale: 'de_DE',
       } as FindElementParams;
       // Act
       try {
@@ -454,8 +454,8 @@ describe('EcomRemoteApi', () => {
       const api = new EcomRemoteApi(fsxaRemoteApi);
 
       const params = {
-        id: '123',
-        locale: 'de',
+        fsPageId: '123',
+        locale: 'de_DE',
       } as FindElementParams;
       // Act
       try {
@@ -476,8 +476,8 @@ describe('EcomRemoteApi', () => {
       const api = new EcomRemoteApi(fsxaRemoteApi);
 
       const params = {
-        id: '123',
-        locale: 'de',
+        fsPageId: '123',
+        locale: 'de_DE',
       } as FindElementParams;
       // Act
       try {

@@ -14,7 +14,7 @@ export type FindElementParams = {
   /**
    * ID of the element.
    */
-  id: string;
+  fsPageId: string;
   /**
    * Locale to get the page in.
    * If omitted, a default locale has to be provided.
