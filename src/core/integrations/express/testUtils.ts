@@ -5,7 +5,7 @@
 import { Request, Response } from 'express';
 
 /**
- * @hidden 
+ * @hidden
  */
 export const generateResponseMock = () => {
   const resMock = {

@@ -22,7 +22,7 @@ export type ApiKeyConfig = {
    * The API key of the CaaS instance for release viewing mode. Leave blank when providing a master key.
    */
   release: string;
-}
+};
 
 /**
  * Configuration for the project part of the configuration.
@@ -55,8 +55,7 @@ export type ProjectConfig = {
    * The tenant ID of the CaaS project.
    */
   tenantID: string;
-}
-
+};
 
 /**
  *Configuration for the core part of the configuration.
@@ -93,4 +92,4 @@ export type CoreConfig = {
 export type FSXAConfig = {
   preview: FSXARemoteApiConfig;
   release: FSXARemoteApiConfig;
-}
+};

@@ -6,7 +6,7 @@ import { APIProvider } from './APIProvider';
 /**
  * Returns the API instance that matches the given request, preview or release.
  * Returns te release API by default.
- * 
+ *
  * @param req Request to get API instance for.
  * @return {*} The API instance for the given request.
  * @internal

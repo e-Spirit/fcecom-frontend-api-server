@@ -3,13 +3,12 @@
  * @internal
  */
 
-
 import chalk from 'chalk';
 import { inspect } from 'util';
 
 const formatOutput = (...args: any[]) => {
   args = args.map((entry) => {
-    if (entry instanceof Error) return `${entry.name} | ${entry.message}`
+    if (entry instanceof Error) return `${entry.name} | ${entry.message}`;
     if (typeof entry === 'object') return JSON.stringify(entry);
     return entry;
   });
@@ -87,7 +86,7 @@ export enum LogLevel {
 
 /**
  * Namespace for the logging.
- * 
+ *
  * @internal
  */
 export namespace Logging {

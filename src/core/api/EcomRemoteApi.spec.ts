@@ -131,27 +131,27 @@ describe('EcomRemoteApi', () => {
       // Assert
       expect(result).toBe(fetchByFilterResult);
       expect(spy).toHaveBeenNthCalledWith(
-          1,
-          expect.objectContaining({
-            filters: [
-              {
-                operator: LogicalQueryOperatorEnum.AND,
-                filters: [
-                  {
-                    field: 'page.formData.type.value',
-                    operator: ComparisonQueryOperatorEnum.EQUALS,
-                    value: params.type,
-                  },
-                  {
-                    field: 'page.formData.id.value',
-                    operator: ComparisonQueryOperatorEnum.EQUALS,
-                    value: params.id,
-                  },
-                ],
-              },
-            ],
-            locale: params.locale,
-          })
+        1,
+        expect.objectContaining({
+          filters: [
+            {
+              operator: LogicalQueryOperatorEnum.AND,
+              filters: [
+                {
+                  field: 'page.formData.type.value',
+                  operator: ComparisonQueryOperatorEnum.EQUALS,
+                  value: params.type,
+                },
+                {
+                  field: 'page.formData.id.value',
+                  operator: ComparisonQueryOperatorEnum.EQUALS,
+                  value: params.id,
+                },
+              ],
+            },
+          ],
+          locale: params.locale,
+        })
       );
     });
     it('throws an error if FSXA throws 404', async () => {
@@ -283,11 +283,11 @@ describe('EcomRemoteApi', () => {
       // Assert
       expect(result).toBe(fetchNavigationResult);
       expect(spy).toHaveBeenNthCalledWith(
-          1,
-          expect.objectContaining({
-            locale: params.locale,
-            initialPath: params.initialPath,
-          })
+        1,
+        expect.objectContaining({
+          locale: params.locale,
+          initialPath: params.initialPath,
+        })
       );
     });
     it('throws an error if FSXA throws 404', async () => {
@@ -416,11 +416,11 @@ describe('EcomRemoteApi', () => {
       // Assert
       expect(result).toBe(fetchElementResult);
       expect(spy).toHaveBeenNthCalledWith(
-          1,
-          expect.objectContaining({
-            locale: params.locale,
-            id: params.fsPageId,
-          })
+        1,
+        expect.objectContaining({
+          locale: params.locale,
+          id: params.fsPageId,
+        })
       );
     });
     it('throws an error if FSXA throws 404', async () => {

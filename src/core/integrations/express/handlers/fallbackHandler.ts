@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { ExpressRouterIntegrationErrors } from '../helper';
-import { getLogger } from "../../../utils/logging/getLogger";
+import { getLogger } from '../../../utils/logging/getLogger';
 
 /**
  * Handler to use if no other route matches.

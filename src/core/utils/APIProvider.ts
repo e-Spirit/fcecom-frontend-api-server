@@ -1,7 +1,7 @@
 import { EcomRemoteApi } from '../api/EcomRemoteApi';
 import { FSXARemoteApi } from 'fsxa-api';
 import { FSXAConfig } from './config.meta';
-import { getLogger } from "./logging/getLogger";
+import { getLogger } from './logging/getLogger';
 
 export namespace APIProvider {
   let previewApi: EcomRemoteApi | undefined;
@@ -51,7 +51,7 @@ export namespace APIProvider {
 
   /**
    * Clears the API instances.
-   * 
+   *
    * @internal
    */
   export const clear = () => {

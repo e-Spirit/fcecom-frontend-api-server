@@ -4,6 +4,8 @@ import cloneDeep from 'lodash.clonedeep';
 import { coreConfig } from './config.spec.data';
 import { CoreConfig } from './config.meta';
 import { MissingDefaultLocaleError } from './errors';
+import set from 'lodash.set';
+import get from 'lodash.get';
 import Mock = jest.Mock;
 
 let loggerMock: Logger = new Logger('');
@@ -177,6 +179,95 @@ describe('config', () => {
       // Assert
       expect(defaultLocale).toEqual(undefined);
       expect(() => EcomConfig.getDefaultLocale()).toThrow(expectedError);
+    });
+  });
+  describe('removeAllTrailingSlashes', () => {
+    it('returns url without any trailing slashes when provided with a single trailing slash', () => {
+      // Arrange
+      const url = 'https://example.com/';
+      // Act
+      const sanitizedUrl = EcomConfig.removeAllTrailingSlashes(url);
+      // Assert
+      expect(sanitizedUrl).not.toEndWith('/');
+    });
+
+    it('returns url without any trailing slashes when provided with multiple trailing slashes', () => {
+      // Arrange
+      const url = 'https://example.com////';
+      // Act
+      const sanitizedUrl = EcomConfig.removeAllTrailingSlashes(url);
+      // Assert
+      expect(sanitizedUrl).not.toEndWith('/');
+    });
+
+    it('returns url without any trailing slashes when provided without any trailing slashes', () => {
+      // Arrange
+      const url = 'https://example.com';
+      // Act
+      const sanitizedUrl = EcomConfig.removeAllTrailingSlashes(url);
+      // Assert
+      expect(sanitizedUrl).not.toEndWith('/');
+    });
+  });
+  describe('sanitizeProperty', () => {
+    it('sanitizes property by applying a sanitization function', () => {
+      // Arrange
+      EcomConfig.coreConfig = coreConfig;
+
+      const initialValue = 'initialValue';
+      const sanitizedValue = 'sanitizedValue';
+      const path = 'project.navigationServiceURL';
+
+      const sanitizeFunction = (_: string): string => sanitizedValue;
+
+      // Act
+      set(EcomConfig.coreConfig, path, initialValue);
+      EcomConfig.sanitizeProperty(path, sanitizeFunction);
+
+      // Assert
+      expect(initialValue).not.toEqual(sanitizedValue);
+      expect(get(EcomConfig.coreConfig, path)).toEqual(sanitizedValue);
+    });
+
+    it('logs an error and uses initial value if the sanitization function does return undefined or null', () => {
+      // Arrange
+      EcomConfig.coreConfig = coreConfig;
+
+      const initialValue = 'initialValue';
+      const sanitizedValue = 'sanitizedValue';
+      const path = 'project.navigationServiceURL';
+
+      const sanitizeFunction =
+        (returnValue: any) =>
+        (_: string): string =>
+          returnValue;
+
+      Logging.init(LogLevel.DEBUG);
+      const warningSpy = jest.fn();
+      const debugSpy = jest.fn();
+
+      global.console = { ...global.console, warn: warningSpy, debug: debugSpy } as any;
+
+      // Act
+      set(EcomConfig.coreConfig, path, initialValue);
+      EcomConfig.sanitizeProperty(path, sanitizeFunction(undefined));
+      EcomConfig.sanitizeProperty(path, sanitizeFunction(null));
+
+      // Assert
+      expect(initialValue).not.toEqual(sanitizedValue);
+      expect(get(EcomConfig.coreConfig, path)).toEqual(initialValue);
+
+      expect(warningSpy).toBeCalled();
+      expect(debugSpy).toBeCalled();
+
+      const warningMessage = 'Sanitizing property project.navigationServiceURL was not successful';
+      expect(warningSpy.mock.calls[0][0]).toContain(warningMessage);
+      expect(warningSpy.mock.calls[1][0]).toContain(warningMessage);
+
+      // language=JSON
+      expect(debugSpy.mock.calls[0][0]).toContain('{"originalValue":"initialValue"}');
+      // language=JSON
+      expect(debugSpy.mock.calls[1][0]).toContain('{"originalValue":"initialValue","sanitizedProperty":null}');
     });
   });
 });
