@@ -115,7 +115,7 @@ describe('EcomRemoteApi', () => {
     it('uses FSXA API instance to find a page', async () => {
       // Arrange
       const fsxaRemoteApi = new FSXARemoteApi(config);
-      const fetchByFilterResult = {};
+      const fetchByFilterResult = {items: []};
       const spy = (fsxaRemoteApi.fetchByFilter = jest.fn().mockResolvedValue(fetchByFilterResult));
       const api = new EcomRemoteApi(fsxaRemoteApi);
 
@@ -129,7 +129,7 @@ describe('EcomRemoteApi', () => {
       const result = await api.findPage(params);
 
       // Assert
-      expect(result).toBe(fetchByFilterResult);
+      expect(result).toBeUndefined();
       expect(spy).toHaveBeenNthCalledWith(
         1,
         expect.objectContaining({

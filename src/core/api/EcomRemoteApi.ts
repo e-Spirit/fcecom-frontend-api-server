@@ -1,9 +1,16 @@
-import { ComparisonQueryOperatorEnum, FetchResponse, FSXAApiErrors, FSXARemoteApi, LogicalQueryOperatorEnum, NavigationData } from 'fsxa-api';
+import {
+  ComparisonQueryOperatorEnum,
+  FSXAApiErrors,
+  FSXARemoteApi,
+  LogicalQueryOperatorEnum,
+  NavigationData
+} from 'fsxa-api';
 import { FetchNavigationParams } from '../integrations/express/handlers/fetchNavigation';
 import { FindPageParams } from '../integrations/express/handlers/findPage';
 import { ItemNotFoundError, MissingParameterError, UnauthorizedError, UnknownError } from '../utils/errors';
 import { EcomConfig } from '../utils/config';
 import { FindElementParams } from '../integrations/express/handlers/findElement';
+import { FetchResponseItem } from './EcomRemoteApi.meta';
 
 /**
  * Server module of the Frontend API for Connect for Commerce.
@@ -26,13 +33,13 @@ export class EcomRemoteApi {
    * @param params Parameters to use to find the page
    * @return {*} Details about the page.
    */
-  async findPage(params: FindPageParams): Promise<FetchResponse> {
+  async findPage(params: FindPageParams): Promise<FetchResponseItem> {
     const { locale = EcomConfig.getDefaultLocale(), id, type } = params;
     if (typeof id === 'undefined') throw new MissingParameterError('id is undefined');
     if (typeof type === 'undefined') throw new MissingParameterError('type is undefined');
 
     try {
-      return await this.fsxaRemoteApi.fetchByFilter({
+      return (await this.fsxaRemoteApi.fetchByFilter({
         filters: [
           {
             operator: LogicalQueryOperatorEnum.AND,
@@ -51,7 +58,7 @@ export class EcomRemoteApi {
           },
         ],
         locale,
-      });
+      })).items?.[0] as FetchResponseItem;
     } catch (err: unknown) {
       if (err instanceof Error) {
         if (err.message === FSXAApiErrors.NOT_FOUND) {
