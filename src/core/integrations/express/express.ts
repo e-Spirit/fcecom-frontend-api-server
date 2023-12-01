@@ -11,7 +11,7 @@ import {
   findElement,
 } from './handlers';
 import { CoreConfig } from '../../utils/config.meta';
-import { initCoreConfig } from '../../utils/config';
+import { initCoreConfig } from '../../utils/init';
 import { getLogger } from '../../utils/logging/getLogger';
 
 /**

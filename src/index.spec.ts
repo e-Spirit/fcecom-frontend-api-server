@@ -1,5 +1,5 @@
 import { getEcomEndpoints } from './core/integrations/express/express';
-import { initCoreConfig } from './core/utils/config';
+import { initCoreConfig } from './core/utils/init';
 import * as Index from './index';
 
 describe('index', () => {

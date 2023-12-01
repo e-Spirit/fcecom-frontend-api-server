@@ -33,7 +33,7 @@ export class EcomRemoteApi {
    * @param params Parameters to use to find the page
    * @return {*} Details about the page.
    */
-  async findPage(params: FindPageParams): Promise<FetchResponseItem> {
+  async findPage(params: FindPageParams): Promise<FetchResponseItem | null> {
     const { locale = EcomConfig.getDefaultLocale(), id, type } = params;
     if (typeof id === 'undefined') throw new MissingParameterError('id is undefined');
     if (typeof type === 'undefined') throw new MissingParameterError('type is undefined');
@@ -58,7 +58,7 @@ export class EcomRemoteApi {
           },
         ],
         locale,
-      })).items?.[0] as FetchResponseItem;
+      })).items?.[0] as FetchResponseItem ?? null;
     } catch (err: unknown) {
       if (err instanceof Error) {
         if (err.message === FSXAApiErrors.NOT_FOUND) {

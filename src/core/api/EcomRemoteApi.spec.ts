@@ -44,7 +44,7 @@ describe('EcomRemoteApi', () => {
         type: 'product',
       } as any as FindPageParams;
       // Act
-      expect(async () => {
+      await expect(async () => {
         return api.findPage(params);
         // Assert
       }).rejects.toThrowError('id is undefined');
@@ -65,7 +65,7 @@ describe('EcomRemoteApi', () => {
         type: 'product',
       } as any as FindPageParams;
       // Act
-      expect(async () => {
+      await expect(async () => {
         return api.findPage(params);
         // Assert
       }).rejects.toThrowError('locale is undefined and no fallback is available');
@@ -106,7 +106,7 @@ describe('EcomRemoteApi', () => {
         type: undefined,
       } as any as FindPageParams;
       // Act
-      expect(async () => {
+      await expect(async () => {
         return api.findPage(params);
         // Assert
       }).rejects.toThrowError('type is undefined');
@@ -129,7 +129,7 @@ describe('EcomRemoteApi', () => {
       const result = await api.findPage(params);
 
       // Assert
-      expect(result).toBeUndefined();
+      expect(result).toBeNull();
       expect(spy).toHaveBeenNthCalledWith(
         1,
         expect.objectContaining({
@@ -240,7 +240,7 @@ describe('EcomRemoteApi', () => {
         locale: undefined,
       } as any as FetchNavigationParams;
       // Act
-      expect(async () => {
+      await expect(async () => {
         return api.fetchNavigation(params);
       }).rejects.toThrowError('locale is undefined and no fallback is available');
       expect(spy).not.toHaveBeenCalled();
@@ -373,7 +373,7 @@ describe('EcomRemoteApi', () => {
         locale: undefined,
       } as any as FindElementParams;
       // Act
-      expect(async () => {
+      await expect(async () => {
         return api.findElement(params);
       }).rejects.toThrowError('locale is undefined and no fallback is available');
       expect(spy).not.toHaveBeenCalled();

@@ -18,7 +18,7 @@ const routerMock = {
   all: jest.fn(),
 };
 
-jest.mock('../../utils/config', () => {
+jest.mock('../../utils/init', () => {
   return {
     initCoreConfig: () => {},
   };

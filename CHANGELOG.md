@@ -1,3 +1,9 @@
+## [0.18.0](https://github.com/e-Spirit/fcecom-frontend-api-server/compare/v0.17.0...v0.18.0) (2023-12-01)
+
+### Changes
+
+* Removed a circular dependency.
+
 ## [0.17.0](https://github.com/e-Spirit/fcecom-frontend-api-server/compare/v0.16.0...v0.17.0) (2023-11-27)
 
 ### Changes

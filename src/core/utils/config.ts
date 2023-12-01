@@ -2,18 +2,10 @@ import { FSXAContentMode } from 'fsxa-api';
 import { CoreConfig, FSXAConfig } from './config.meta';
 import { Logger, Logging, LogLevel } from './logging/Logger';
 import { InvalidConfigurationError, MissingDefaultLocaleError } from './errors';
-import { APIProvider } from './APIProvider';
 import cloneDeep from 'lodash.clonedeep';
 import set from 'lodash.set';
 import get from 'lodash.get';
 import { validateCoreConfig } from './configValidation';
-
-/**
- * Initializes the API with the given core configuration.
- *
- * @param config Core configuration to set.
- */
-export const initCoreConfig = (config: CoreConfig) => EcomConfig.setConfig(config);
 
 export namespace EcomConfig {
   /**
@@ -52,8 +44,6 @@ export namespace EcomConfig {
 
     const { error } = validateCoreConfig(coreConfig);
     if (error) throw new InvalidConfigurationError('Validation of configuration failed. Please check your config.');
-
-    APIProvider.init(getFSXAConfig());
   };
 
   /**

@@ -1,6 +1,6 @@
 {
   "name": "fcecom-frontend-api-server",
-  "version": "0.17.0",
+  "version": "0.18.0",
   "description": "FirstSpirit Connect for Commerce - Frontend API Server",
   "main": "dist/cjs",
   "module": "dist/esm",
@@ -66,7 +66,7 @@
     "rimraf": "^3.0.2",
     "rollup": "^2.79.1",
     "rollup-plugin-terser": "^7.0.2",
-    "rollup-plugin-ts": "^3.0.2",
+    "rollup-plugin-ts": "^3.4.5",
     "ts-jest": "^29.0.3",
     "typedoc": "^0.24.8",
     "typedoc-plugin-markdown": "^3.15.3",
