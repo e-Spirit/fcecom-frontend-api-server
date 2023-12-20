@@ -1,10 +1,10 @@
 {
   "name": "fcecom-frontend-api-server",
-  "version": "0.18.0",
+  "version": "0.19.0",
   "description": "FirstSpirit Connect for Commerce - Frontend API Server",
-  "main": "dist/cjs",
-  "module": "dist/esm",
-  "types": "dist/types",
+  "main": "dist/main.cjs",
+  "module": "dist/main.esm",
+  "types": "dist/main.types",
   "scripts": {
     "clean": "rimraf dist",
     "ci": "npm ci",
@@ -36,7 +36,6 @@
     "chalk": "^4.1.2",
     "fsxa-api": "^10.16.0",
     "joi": "^17.7.0",
-    "lodash.clonedeep": "^4.5.0",
     "lodash.get": "^4.3.2",
     "lodash.set": "^4.3.2",
     "tslib": "^2.4.1"
@@ -48,7 +47,6 @@
     "@rollup/plugin-node-resolve": "^15.0.1",
     "@types/express": "^4.17.15",
     "@types/jest": "^29.2.4",
-    "@types/lodash.clonedeep": "^4.5.7",
     "@types/lodash.get": "^4.4.7",
     "@types/lodash.set": "^4.3.7",
     "@types/node": "^18.11.17",

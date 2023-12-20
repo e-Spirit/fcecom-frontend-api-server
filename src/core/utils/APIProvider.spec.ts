@@ -17,7 +17,7 @@ describe('APIProvider', () => {
       }).toThrow('APIProvider not initialized');
     });
     describe('positiveCases', () => {
-      beforeEach(() => EcomConfig.setConfig(coreConfig));
+      beforeEach(() => EcomConfig.applyConfig(coreConfig));
       it('only creates one instance of the API', () => {
         // Arrange
         APIProvider.init(EcomConfig.getFSXAConfig());
@@ -47,7 +47,7 @@ describe('APIProvider', () => {
       }).toThrow('APIProvider not initialized');
     });
     describe('positiveCases', () => {
-      beforeEach(() => EcomConfig.setConfig(coreConfig));
+      beforeEach(() => EcomConfig.applyConfig(coreConfig));
       it('only creates one instance of the API', () => {
         // Arrange
         APIProvider.init(EcomConfig.getFSXAConfig());

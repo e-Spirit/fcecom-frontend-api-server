@@ -8,6 +8,6 @@ import { CoreConfig } from './config.meta';
  * @param config Core configuration to set.
  */
 export const initCoreConfig = (config: CoreConfig) => {
-  EcomConfig.setConfig(config);
+  EcomConfig.applyConfig(config);
   APIProvider.init(EcomConfig.getFSXAConfig());
 };

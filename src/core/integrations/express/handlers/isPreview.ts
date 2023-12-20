@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { getApi } from '../../../utils/apiSelector';
+import { EcomConfig } from '../../../utils/config';
 
 /**
  * Handler to use for the ispreview route.
@@ -9,9 +10,11 @@ import { getApi } from '../../../utils/apiSelector';
  * @param res Express response object.
  * @return {*}
  */
-export const isPreview = async (req: Request, res: Response): Promise<Response> => {
-  return res.json({ isPreview: getApi(req).contentMode === 'preview' });
-};
+export const isPreview = async (req: Request, res: Response): Promise<Response> =>
+  res.json({
+    isPreview: getApi(req).contentMode === 'preview',
+    fsServerOrigin: EcomConfig.getCoreConfig().fsServerOrigin,
+  });
 
 /**
  * @internal

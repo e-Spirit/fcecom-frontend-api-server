@@ -36,8 +36,8 @@ describe('fetchNavigation', () => {
     await fetchNavigation(reqMock, resMock);
 
     // Assert
-    expect(fetchNavigationMock).toBeCalledWith(reqMock.query);
-    expect(resMock.json).toBeCalledWith(fetchNavigationResult);
+    expect(fetchNavigationMock).toHaveBeenCalledWith(reqMock.query);
+    expect(resMock.json).toHaveBeenCalledWith(fetchNavigationResult);
   });
   it('handles missing parameter error from API', async () => {
     // Arrange
@@ -52,9 +52,9 @@ describe('fetchNavigation', () => {
     await fetchNavigation(reqMock, resMock);
 
     // Assert
-    expect(loggerMock.error).toBeCalledWith('Unable to fetch navigation', error);
-    expect(resMock.status).toBeCalledWith(400);
-    expect(resMock.json).toBeCalledWith(
+    expect(loggerMock.error).toHaveBeenCalledWith('Unable to fetch navigation', error);
+    expect(resMock.status).toHaveBeenCalledWith(400);
+    expect(resMock.json).toHaveBeenCalledWith(
       expect.objectContaining({
         error: 'ERROR',
       })
@@ -73,8 +73,8 @@ describe('fetchNavigation', () => {
     await fetchNavigation(reqMock, resMock);
 
     // Assert
-    expect(loggerMock.error).toBeCalledWith('Unable to fetch navigation', error);
-    expect(resMock.status).toBeCalledWith(404);
+    expect(loggerMock.error).toHaveBeenCalledWith('Unable to fetch navigation', error);
+    expect(resMock.status).toHaveBeenCalledWith(404);
   });
   it('handles not authorized error from API', async () => {
     // Arrange
@@ -89,8 +89,8 @@ describe('fetchNavigation', () => {
     await fetchNavigation(reqMock, resMock);
 
     // Assert
-    expect(loggerMock.error).toBeCalledWith('Unable to fetch navigation', error);
-    expect(resMock.status).toBeCalledWith(401);
+    expect(loggerMock.error).toHaveBeenCalledWith('Unable to fetch navigation', error);
+    expect(resMock.status).toHaveBeenCalledWith(401);
   });
   it('handles not any other error from API', async () => {
     // Arrange
@@ -105,7 +105,7 @@ describe('fetchNavigation', () => {
     await fetchNavigation(reqMock, resMock);
 
     // Assert
-    expect(loggerMock.error).toBeCalledWith('Unable to fetch navigation', error);
-    expect(resMock.status).toBeCalledWith(500);
+    expect(loggerMock.error).toHaveBeenCalledWith('Unable to fetch navigation', error);
+    expect(resMock.status).toHaveBeenCalledWith(500);
   });
 });

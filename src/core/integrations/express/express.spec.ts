@@ -37,12 +37,12 @@ describe('express integration', () => {
       const result = getEcomEndpoints(coreConfig);
       // Assert
       expect(result).toBe(routerMock);
-      expect(routerMock.use).toBeCalledWith(expressJsonMock);
-      expect(routerMock.get).toBeCalledWith(FIND_PAGE_ROUTE, findPage);
-      expect(routerMock.get).toBeCalledWith(FETCH_NAVIGATION_ROUTE, fetchNavigation);
-      expect(routerMock.get).toBeCalledWith(FIND_ELEMENT_ROUTE, findElement);
-      expect(routerMock.get).toBeCalledWith(IS_PREVIEW_ROUTE, isPreview);
-      expect(routerMock.all).toBeCalledWith('*', fallbackHandler);
+      expect(routerMock.use).toHaveBeenCalledWith(expressJsonMock);
+      expect(routerMock.get).toHaveBeenCalledWith(FIND_PAGE_ROUTE, findPage);
+      expect(routerMock.get).toHaveBeenCalledWith(FETCH_NAVIGATION_ROUTE, fetchNavigation);
+      expect(routerMock.get).toHaveBeenCalledWith(FIND_ELEMENT_ROUTE, findElement);
+      expect(routerMock.get).toHaveBeenCalledWith(IS_PREVIEW_ROUTE, isPreview);
+      expect(routerMock.all).toHaveBeenCalledWith('*', fallbackHandler);
     });
   });
 });

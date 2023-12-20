@@ -48,7 +48,7 @@ describe('Logger', () => {
         // @ts-ignore - Makes it easier for testing
         logger[test.method]('MY TEST LOG');
         // Assert
-        expect(spy).toBeCalled();
+        expect(spy).toHaveBeenCalled();
       });
       it(`does not log to the console if log level above ${test.method}`, () => {
         // Arrange

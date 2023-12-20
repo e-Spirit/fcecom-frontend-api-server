@@ -25,9 +25,9 @@ describe('fallbackHandler', () => {
     await fallbackHandler(reqMock, resMock);
 
     // Assert
-    expect(loggerMock.warn).toBeCalledWith('Unknown route requested', reqMock.url);
-    expect(resMock.status).toBeCalledWith(404);
-    expect(resMock.json).toBeCalledWith(
+    expect(loggerMock.warn).toHaveBeenCalledWith('Unknown route requested', reqMock.url);
+    expect(resMock.status).toHaveBeenCalledWith(404);
+    expect(resMock.json).toHaveBeenCalledWith(
       expect.objectContaining({
         error: ExpressRouterIntegrationErrors.UNKNOWN_ROUTE,
       })

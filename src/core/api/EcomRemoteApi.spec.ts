@@ -47,7 +47,7 @@ describe('EcomRemoteApi', () => {
       await expect(async () => {
         return api.findPage(params);
         // Assert
-      }).rejects.toThrowError('id is undefined');
+      }).rejects.toThrow('id is undefined');
       expect(spy).not.toHaveBeenCalled();
     });
     it('throws an error if parameter "locale" is missing and no fallback is configured', async () => {
@@ -57,7 +57,7 @@ describe('EcomRemoteApi', () => {
       const spy = (fsxaRemoteApi.fetchByFilter = jest.fn().mockResolvedValue(fetchByFilterResult));
       const api = new EcomRemoteApi(fsxaRemoteApi);
 
-      EcomConfig.setConfig({ ...coreConfig, defaultLocale: undefined });
+      EcomConfig.applyConfig({ ...coreConfig, defaultLocale: undefined });
 
       const params = {
         id: '123',
@@ -68,7 +68,7 @@ describe('EcomRemoteApi', () => {
       await expect(async () => {
         return api.findPage(params);
         // Assert
-      }).rejects.toThrowError('locale is undefined and no fallback is available');
+      }).rejects.toThrow('locale is undefined and no fallback is available');
       expect(spy).not.toHaveBeenCalled();
     });
     it('proceeds if parameter "locale" is missing but a fallback is configured', async () => {
@@ -78,7 +78,7 @@ describe('EcomRemoteApi', () => {
       const spy = (fsxaRemoteApi.fetchByFilter = jest.fn().mockResolvedValue(fetchByFilterResult));
       const api = new EcomRemoteApi(fsxaRemoteApi);
 
-      EcomConfig.setConfig(coreConfig);
+      EcomConfig.applyConfig(coreConfig);
 
       const params = {
         id: '123',
@@ -109,13 +109,13 @@ describe('EcomRemoteApi', () => {
       await expect(async () => {
         return api.findPage(params);
         // Assert
-      }).rejects.toThrowError('type is undefined');
+      }).rejects.toThrow('type is undefined');
       expect(spy).not.toHaveBeenCalled();
     });
     it('uses FSXA API instance to find a page', async () => {
       // Arrange
       const fsxaRemoteApi = new FSXARemoteApi(config);
-      const fetchByFilterResult = {items: []};
+      const fetchByFilterResult = { items: [] };
       const spy = (fsxaRemoteApi.fetchByFilter = jest.fn().mockResolvedValue(fetchByFilterResult));
       const api = new EcomRemoteApi(fsxaRemoteApi);
 
@@ -233,7 +233,7 @@ describe('EcomRemoteApi', () => {
       const spy = (fsxaRemoteApi.fetchNavigation = jest.fn().mockResolvedValue(fetchNavigationResult));
       const api = new EcomRemoteApi(fsxaRemoteApi);
 
-      EcomConfig.setConfig({ ...coreConfig, defaultLocale: undefined });
+      EcomConfig.applyConfig({ ...coreConfig, defaultLocale: undefined });
 
       const params = {
         initialPath: 'path',
@@ -242,7 +242,7 @@ describe('EcomRemoteApi', () => {
       // Act
       await expect(async () => {
         return api.fetchNavigation(params);
-      }).rejects.toThrowError('locale is undefined and no fallback is available');
+      }).rejects.toThrow('locale is undefined and no fallback is available');
       expect(spy).not.toHaveBeenCalled();
     });
     it('proceeds if parameter "locale" is missing but a fallback is configured', async () => {
@@ -252,7 +252,7 @@ describe('EcomRemoteApi', () => {
       const spy = (fsxaRemoteApi.fetchNavigation = jest.fn().mockResolvedValue(fetchNavigationResult));
       const api = new EcomRemoteApi(fsxaRemoteApi);
 
-      EcomConfig.setConfig(coreConfig);
+      EcomConfig.applyConfig(coreConfig);
 
       const params = {
         initialPath: 'path',
@@ -366,7 +366,7 @@ describe('EcomRemoteApi', () => {
       const spy = (fsxaRemoteApi.fetchElement = jest.fn().mockResolvedValue(fetchElementResult));
       const api = new EcomRemoteApi(fsxaRemoteApi);
 
-      EcomConfig.setConfig({ ...coreConfig, defaultLocale: undefined });
+      EcomConfig.applyConfig({ ...coreConfig, defaultLocale: undefined });
 
       const params = {
         fsPageId: '123',
@@ -375,7 +375,7 @@ describe('EcomRemoteApi', () => {
       // Act
       await expect(async () => {
         return api.findElement(params);
-      }).rejects.toThrowError('locale is undefined and no fallback is available');
+      }).rejects.toThrow('locale is undefined and no fallback is available');
       expect(spy).not.toHaveBeenCalled();
     });
     it('proceeds if parameter "locale" is missing but a fallback is configured', async () => {
@@ -385,7 +385,7 @@ describe('EcomRemoteApi', () => {
       const spy = (fsxaRemoteApi.fetchElement = jest.fn().mockResolvedValue(fetchElementResult));
       const api = new EcomRemoteApi(fsxaRemoteApi);
 
-      EcomConfig.setConfig(coreConfig);
+      EcomConfig.applyConfig(coreConfig);
 
       const params = {
         fsPageId: '213',

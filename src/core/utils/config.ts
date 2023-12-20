@@ -2,7 +2,6 @@ import { FSXAContentMode } from 'fsxa-api';
 import { CoreConfig, FSXAConfig } from './config.meta';
 import { Logger, Logging, LogLevel } from './logging/Logger';
 import { InvalidConfigurationError, MissingDefaultLocaleError } from './errors';
-import cloneDeep from 'lodash.clonedeep';
 import set from 'lodash.set';
 import get from 'lodash.get';
 import { validateCoreConfig } from './configValidation';
@@ -24,8 +23,8 @@ export namespace EcomConfig {
    * @internal
    * @param config The configuration to set.
    */
-  export const setConfig = (config: CoreConfig) => {
-    coreConfig = cloneDeep(config);
+  export const applyConfig = (config: CoreConfig) => {
+    coreConfig = config;
     sanitizeCoreConfig();
 
     // LogLevel Default

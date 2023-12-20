@@ -1,3 +1,9 @@
+## [0.19.0](https://github.com/e-Spirit/fcecom-frontend-api-server/compare/v0.18.0...v0.19.0) (2023-12-20)
+
+### Changes
+
+* Optimization of config validation.
+
 ## [0.18.0](https://github.com/e-Spirit/fcecom-frontend-api-server/compare/v0.17.0...v0.18.0) (2023-12-01)
 
 ### Changes

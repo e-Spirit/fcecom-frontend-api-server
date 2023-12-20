@@ -1,6 +1,5 @@
 import { EcomConfig } from './config';
 import { Logger, Logging, LogLevel } from './logging/Logger';
-import cloneDeep from 'lodash.clonedeep';
 import { coreConfig } from './config.spec.data';
 import { CoreConfig } from './config.meta';
 import { MissingDefaultLocaleError } from './errors';
@@ -17,7 +16,7 @@ describe('config', () => {
   describe('setConfig', () => {
     it('uses defaults for omitted values', () => {
       // Arrange
-      const testConfig = cloneDeep(coreConfig);
+      const testConfig = coreConfig;
 
       // @ts-ignore
       delete testConfig.logLevel;
@@ -26,7 +25,7 @@ describe('config', () => {
       // @ts-ignore
       delete testConfig.project.apiKey.release;
 
-      EcomConfig.setConfig(testConfig);
+      EcomConfig.applyConfig(testConfig);
 
       // Act
       const result = EcomConfig.getCoreConfig();
@@ -38,14 +37,14 @@ describe('config', () => {
     });
     it('uses defaults for empty values', () => {
       // Arrange
-      const testConfig = cloneDeep(coreConfig);
+      const testConfig = coreConfig;
 
       // @ts-ignore
       testConfig.project.apiKey.preview = '';
       // @ts-ignore
       testConfig.project.apiKey.release = '';
 
-      EcomConfig.setConfig(testConfig);
+      EcomConfig.applyConfig(testConfig);
 
       // Act
       const result = EcomConfig.getCoreConfig();
@@ -78,7 +77,7 @@ describe('config', () => {
 
       // Act & Assert
       // @ts-ignore
-      expect(() => EcomConfig.setConfig(testConfig)).toThrowError('Validation of configuration failed. Please check your config.');
+      expect(() => EcomConfig.applyConfig(testConfig)).toThrow('Validation of configuration failed. Please check your config.');
 
       expect((loggerMock.error as Mock).mock.calls).toEqual([
         ['fsServerOrigin', '"FirstSpirit Server Origin" must be a valid uri'],
@@ -105,12 +104,12 @@ describe('config', () => {
 
       // Act & Assert
       // @ts-ignore
-      expect(() => EcomConfig.setConfig(testConfig)).toThrowError('API key configuration not found');
+      expect(() => EcomConfig.applyConfig(testConfig)).toThrow('API key configuration not found');
     });
     it('does accept configuration object containing additional parameters', () => {
       expect(() => {
         // Arrange & Act
-        EcomConfig.setConfig({ ...coreConfig, foo: 'bar' } as any);
+        EcomConfig.applyConfig({ ...coreConfig, foo: 'bar' } as any);
 
         // Assert
       }).not.toThrow();
@@ -121,7 +120,7 @@ describe('config', () => {
   describe('getCoreConfig', () => {
     it('returns the core config', () => {
       // Arrange
-      EcomConfig.setConfig(coreConfig);
+      EcomConfig.applyConfig(coreConfig);
       // Act
       const result = EcomConfig.getCoreConfig();
       // Assert
@@ -132,7 +131,7 @@ describe('config', () => {
   describe('getFSXAConfig', () => {
     it('returns the FSXAConfig config', () => {
       // Arrange
-      EcomConfig.setConfig(coreConfig);
+      EcomConfig.applyConfig(coreConfig);
       // Act
       const result = EcomConfig.getFSXAConfig();
       // Assert
@@ -160,7 +159,7 @@ describe('config', () => {
   describe('getDefaultLocale', () => {
     it('returns correct default locale', () => {
       // Arrange
-      EcomConfig.setConfig({ ...coreConfig, defaultLocale: 'en_GB' });
+      EcomConfig.applyConfig({ ...coreConfig, defaultLocale: 'en_GB' });
       // Act
       const { defaultLocale } = EcomConfig.getCoreConfig();
       // Assert
@@ -172,7 +171,7 @@ describe('config', () => {
 
     it('throws error if default locale is not set', () => {
       // Arrange
-      EcomConfig.setConfig({ ...coreConfig, defaultLocale: undefined });
+      EcomConfig.applyConfig({ ...coreConfig, defaultLocale: undefined });
       const expectedError = new MissingDefaultLocaleError('locale is undefined and no fallback is available');
       // Act
       const { defaultLocale } = EcomConfig.getCoreConfig();
@@ -257,8 +256,8 @@ describe('config', () => {
       expect(initialValue).not.toEqual(sanitizedValue);
       expect(get(EcomConfig.coreConfig, path)).toEqual(initialValue);
 
-      expect(warningSpy).toBeCalled();
-      expect(debugSpy).toBeCalled();
+      expect(warningSpy).toHaveBeenCalled();
+      expect(debugSpy).toHaveBeenCalled();
 
       const warningMessage = 'Sanitizing property project.navigationServiceURL was not successful';
       expect(warningSpy.mock.calls[0][0]).toContain(warningMessage);

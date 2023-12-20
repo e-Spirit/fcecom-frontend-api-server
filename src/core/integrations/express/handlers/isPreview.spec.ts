@@ -1,5 +1,7 @@
 import { generateRequestMock, generateResponseMock } from '../testUtils';
 import { isPreview } from './isPreview';
+import { EcomConfig } from '../../../utils/config';
+import { CoreConfig } from '../../../utils/config.meta';
 
 let contentMode: string;
 jest.mock('../../../utils/apiSelector', () => {
@@ -18,11 +20,15 @@ describe('isPreview', () => {
     const reqMock = generateRequestMock();
     contentMode = 'preview';
 
+    EcomConfig['coreConfig'] = {
+      fsServerOrigin: 'https://example.com',
+    } as CoreConfig;
+
     // Act
     await isPreview(reqMock, resMock);
 
     // Assert
-    expect(resMock.json).toBeCalledWith(
+    expect(resMock.json).toHaveBeenCalledWith(
       expect.objectContaining({
         isPreview: true,
       })
@@ -34,11 +40,15 @@ describe('isPreview', () => {
     const reqMock = generateRequestMock();
     contentMode = 'release';
 
+    EcomConfig['coreConfig'] = {
+      fsServerOrigin: 'https://example.com',
+    } as CoreConfig;
+
     // Act
     await isPreview(reqMock, resMock);
 
     // Assert
-    expect(resMock.json).toBeCalledWith(
+    expect(resMock.json).toHaveBeenCalledWith(
       expect.objectContaining({
         isPreview: false,
       })
