@@ -1,3 +1,9 @@
+## [0.20.0](https://github.com/e-Spirit/fcecom-frontend-api-server/compare/v0.19.0...v0.20.0) (2023-12-21)
+
+### Changes
+
+* Fixed a bug where the FirstSpirit server origin was exposed to the frontend.
+
 ## [0.19.0](https://github.com/e-Spirit/fcecom-frontend-api-server/compare/v0.18.0...v0.19.0) (2023-12-20)
 
 ### Changes
