@@ -10,7 +10,7 @@ import {
   FIND_ELEMENT_ROUTE,
   findElement,
 } from './handlers';
-import { coreConfig } from '../../utils/config.spec.data';
+import { getTestCoreConfig } from '../../utils/config.spec.data';
 
 const routerMock = {
   use: jest.fn(),
@@ -34,6 +34,7 @@ describe('express integration', () => {
   describe('getEcomEndpoints()', () => {
     it('sets all routes and enables json', () => {
       // Arrange & Act
+      const coreConfig = getTestCoreConfig();
       const result = getEcomEndpoints(coreConfig);
       // Assert
       expect(result).toBe(routerMock);

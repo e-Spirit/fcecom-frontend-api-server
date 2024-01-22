@@ -1,4 +1,4 @@
-import { ItemNotFoundError, MissingParameterError, UnauthorizedError } from '../../../utils/errors';
+import { InvalidLocaleError, ItemNotFoundError, MissingParameterError, UnauthorizedError } from '../../../utils/errors';
 import { Logger, Logging, LogLevel } from '../../../utils/logging/Logger';
 import { generateRequestMock, generateResponseMock } from '../testUtils';
 import { findPage } from './findPage';
@@ -44,6 +44,27 @@ describe('findPage', () => {
     const resMock = generateResponseMock();
     const reqMock = generateRequestMock();
     const error = new MissingParameterError('ERROR');
+    findPageMock.mockImplementation(() => {
+      throw error;
+    });
+
+    // Act
+    await findPage(reqMock, resMock);
+
+    // Assert
+    expect(loggerMock.error).toHaveBeenCalledWith('Unable to find page', error);
+    expect(resMock.status).toHaveBeenCalledWith(400);
+    expect(resMock.json).toHaveBeenCalledWith(
+      expect.objectContaining({
+        error: 'ERROR',
+      })
+    );
+  });
+  it('handles invalid locale error from API', async () => {
+    // Arrange
+    const resMock = generateResponseMock();
+    const reqMock = generateRequestMock();
+    const error = new InvalidLocaleError('ERROR');
     findPageMock.mockImplementation(() => {
       throw error;
     });

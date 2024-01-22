@@ -55,6 +55,11 @@ export type ProjectConfig = {
    * The tenant ID of the CaaS project.
    */
   tenantID: string;
+
+  /**
+   * Whether untranslated sections should be removed.
+   */
+  removeUntranslatedSections?: boolean;
 };
 
 /**

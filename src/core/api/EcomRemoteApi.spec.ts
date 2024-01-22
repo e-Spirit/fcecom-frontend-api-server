@@ -3,11 +3,11 @@ import { EcomRemoteApi } from './EcomRemoteApi';
 import { FetchNavigationParams } from '../integrations/express/handlers/fetchNavigation';
 import { FindPageParams } from '../integrations/express/handlers/findPage';
 import { EcomConfig } from '../utils/config';
-import { coreConfig } from '../utils/config.spec.data';
+import { getTestCoreConfig } from '../utils/config.spec.data';
 import { FindElementParams } from '../integrations/express/handlers/findElement';
 import { ItemNotFoundError, UnauthorizedError, UnknownError } from '../utils/errors';
 
-const config = {
+const fsxaConfig = {
   apikey: 'APIKEY',
   caasURL: 'CAASURL',
   contentMode: 'preview',
@@ -16,11 +16,15 @@ const config = {
   tenantID: 'TENANTID',
 } as FSXARemoteApiConfig;
 
+const getFsxaConfig = () => {
+  return JSON.parse(JSON.stringify(fsxaConfig));
+};
+
 describe('EcomRemoteApi', () => {
   describe('constructor()', () => {
     it('creates an instance', () => {
       // Arrange
-      const fsxaRemoteApi = new FSXARemoteApi(config);
+      const fsxaRemoteApi = new FSXARemoteApi(getFsxaConfig());
 
       // Act
       const result = new EcomRemoteApi(fsxaRemoteApi);
@@ -33,14 +37,14 @@ describe('EcomRemoteApi', () => {
   describe('findPage()', () => {
     it('throws an error if parameter "id" is missing', async () => {
       // Arrange
-      const fsxaRemoteApi = new FSXARemoteApi(config);
+      const fsxaRemoteApi = new FSXARemoteApi(getFsxaConfig());
       const fetchByFilterResult = {};
       const spy = (fsxaRemoteApi.fetchByFilter = jest.fn().mockResolvedValue(fetchByFilterResult));
       const api = new EcomRemoteApi(fsxaRemoteApi);
 
       const params = {
         id: undefined,
-        locale: 'de',
+        locale: 'de_DE',
         type: 'product',
       } as any as FindPageParams;
       // Act
@@ -52,7 +56,8 @@ describe('EcomRemoteApi', () => {
     });
     it('throws an error if parameter "locale" is missing and no fallback is configured', async () => {
       // Arrange
-      const fsxaRemoteApi = new FSXARemoteApi(config);
+      const coreConfig = getTestCoreConfig();
+      const fsxaRemoteApi = new FSXARemoteApi(getFsxaConfig());
       const fetchByFilterResult = {};
       const spy = (fsxaRemoteApi.fetchByFilter = jest.fn().mockResolvedValue(fetchByFilterResult));
       const api = new EcomRemoteApi(fsxaRemoteApi);
@@ -73,7 +78,8 @@ describe('EcomRemoteApi', () => {
     });
     it('proceeds if parameter "locale" is missing but a fallback is configured', async () => {
       // Arrange
-      const fsxaRemoteApi = new FSXARemoteApi(config);
+      const coreConfig = getTestCoreConfig();
+      const fsxaRemoteApi = new FSXARemoteApi(getFsxaConfig());
       const fetchByFilterResult = {};
       const spy = (fsxaRemoteApi.fetchByFilter = jest.fn().mockResolvedValue(fetchByFilterResult));
       const api = new EcomRemoteApi(fsxaRemoteApi);
@@ -95,14 +101,14 @@ describe('EcomRemoteApi', () => {
     });
     it('throws an error if parameter "type" is missing', async () => {
       // Arrange
-      const fsxaRemoteApi = new FSXARemoteApi(config);
+      const fsxaRemoteApi = new FSXARemoteApi(getFsxaConfig());
       const fetchByFilterResult = {};
       const spy = (fsxaRemoteApi.fetchByFilter = jest.fn().mockResolvedValue(fetchByFilterResult));
       const api = new EcomRemoteApi(fsxaRemoteApi);
 
       const params = {
         id: '123',
-        locale: 'de',
+        locale: 'de_DE',
         type: undefined,
       } as any as FindPageParams;
       // Act
@@ -114,14 +120,14 @@ describe('EcomRemoteApi', () => {
     });
     it('uses FSXA API instance to find a page', async () => {
       // Arrange
-      const fsxaRemoteApi = new FSXARemoteApi(config);
+      const fsxaRemoteApi = new FSXARemoteApi(getFsxaConfig());
       const fetchByFilterResult = { items: [] };
       const spy = (fsxaRemoteApi.fetchByFilter = jest.fn().mockResolvedValue(fetchByFilterResult));
       const api = new EcomRemoteApi(fsxaRemoteApi);
 
       const params = {
         id: '123',
-        locale: 'de',
+        locale: 'de_DE',
         type: 'product',
       } as FindPageParams;
 
@@ -157,14 +163,14 @@ describe('EcomRemoteApi', () => {
     it('throws an error if FSXA throws 404', async () => {
       expect.assertions(3);
       // Arrange
-      const fsxaRemoteApi = new FSXARemoteApi(config);
+      const fsxaRemoteApi = new FSXARemoteApi(getFsxaConfig());
       const error = new Error(FSXAApiErrors.NOT_FOUND);
       const spy = (fsxaRemoteApi.fetchByFilter = jest.fn().mockRejectedValue(error));
       const api = new EcomRemoteApi(fsxaRemoteApi);
 
       const params = {
         id: '123',
-        locale: 'de',
+        locale: 'de_DE',
         type: 'product',
       } as FindPageParams;
       // Act
@@ -180,14 +186,14 @@ describe('EcomRemoteApi', () => {
     it('throws an error if FSXA throws 401', async () => {
       expect.assertions(3);
       // Arrange
-      const fsxaRemoteApi = new FSXARemoteApi(config);
+      const fsxaRemoteApi = new FSXARemoteApi(getFsxaConfig());
       const error = new Error(FSXAApiErrors.NOT_AUTHORIZED);
       const spy = (fsxaRemoteApi.fetchByFilter = jest.fn().mockRejectedValue(error));
       const api = new EcomRemoteApi(fsxaRemoteApi);
 
       const params = {
         id: '123',
-        locale: 'de',
+        locale: 'de_DE',
         type: 'product',
       } as FindPageParams;
       // Act
@@ -203,14 +209,14 @@ describe('EcomRemoteApi', () => {
     it('throws an error if FSXA throws unkown error', async () => {
       expect.assertions(3);
       // Arrange
-      const fsxaRemoteApi = new FSXARemoteApi(config);
+      const fsxaRemoteApi = new FSXARemoteApi(getFsxaConfig());
       const error = new Error('UNKNOWN ERROR');
       const spy = (fsxaRemoteApi.fetchByFilter = jest.fn().mockRejectedValue(error));
       const api = new EcomRemoteApi(fsxaRemoteApi);
 
       const params = {
         id: '123',
-        locale: 'de',
+        locale: 'de_DE',
         type: 'product',
       } as FindPageParams;
       // Act
@@ -223,12 +229,35 @@ describe('EcomRemoteApi', () => {
         expect(err.message).toEqual('Failed to find page');
       }
     });
+    it('returns null if FSXA returns no page (removeUntranslatedSections=true)', async () => {
+      // Arrange
+      const fsxaRemoteApi = new FSXARemoteApi(getFsxaConfig());
+      const fetchByFilterResult = { items: [] };
+      fsxaRemoteApi.fetchByFilter = jest.fn().mockResolvedValue(fetchByFilterResult);
+      const api = new EcomRemoteApi(fsxaRemoteApi);
+      const coreConfig = getTestCoreConfig();
+      coreConfig.project.removeUntranslatedSections = true;
+      EcomConfig.applyConfig(coreConfig);
+
+      const params = {
+        id: '123',
+        locale: 'de_DE',
+        type: 'product',
+      } as FindPageParams;
+
+      // Act
+      const result = await api.findPage(params);
+
+      // Assert
+      expect(result).toBeNull();
+    });
   });
 
   describe('fetchNavigation()', () => {
     it('throws an error if parameter "locale" is missing and no fallback is configured', async () => {
       // Arrange
-      const fsxaRemoteApi = new FSXARemoteApi(config);
+      const coreConfig = getTestCoreConfig();
+      const fsxaRemoteApi = new FSXARemoteApi(getFsxaConfig());
       const fetchNavigationResult = {};
       const spy = (fsxaRemoteApi.fetchNavigation = jest.fn().mockResolvedValue(fetchNavigationResult));
       const api = new EcomRemoteApi(fsxaRemoteApi);
@@ -247,7 +276,8 @@ describe('EcomRemoteApi', () => {
     });
     it('proceeds if parameter "locale" is missing but a fallback is configured', async () => {
       // Arrange
-      const fsxaRemoteApi = new FSXARemoteApi(config);
+      const coreConfig = getTestCoreConfig();
+      const fsxaRemoteApi = new FSXARemoteApi(getFsxaConfig());
       const fetchNavigationResult = {};
       const spy = (fsxaRemoteApi.fetchNavigation = jest.fn().mockResolvedValue(fetchNavigationResult));
       const api = new EcomRemoteApi(fsxaRemoteApi);
@@ -268,7 +298,7 @@ describe('EcomRemoteApi', () => {
     });
     it('uses FSXA API instance to fetch the navigation', async () => {
       // Arrange
-      const fsxaRemoteApi = new FSXARemoteApi(config);
+      const fsxaRemoteApi = new FSXARemoteApi(getFsxaConfig());
       const fetchNavigationResult = {};
       const spy = (fsxaRemoteApi.fetchNavigation = jest.fn().mockResolvedValue(fetchNavigationResult));
       const api = new EcomRemoteApi(fsxaRemoteApi);
@@ -276,7 +306,7 @@ describe('EcomRemoteApi', () => {
       // Act
       const params = {
         initialPath: 'path',
-        locale: 'de',
+        locale: 'de_DE',
       } as FetchNavigationParams;
       const result = await api.fetchNavigation(params);
 
@@ -293,14 +323,14 @@ describe('EcomRemoteApi', () => {
     it('throws an error if FSXA throws 404', async () => {
       expect.assertions(3);
       // Arrange
-      const fsxaRemoteApi = new FSXARemoteApi(config);
+      const fsxaRemoteApi = new FSXARemoteApi(getFsxaConfig());
       const error = new Error(FSXAApiErrors.NOT_FOUND);
       const spy = (fsxaRemoteApi.fetchNavigation = jest.fn().mockRejectedValue(error));
       const api = new EcomRemoteApi(fsxaRemoteApi);
 
       const params = {
         initialPath: 'path',
-        locale: 'de',
+        locale: 'de_DE',
       } as FetchNavigationParams;
       // Act
       try {
@@ -315,14 +345,14 @@ describe('EcomRemoteApi', () => {
     it('throws an error if FSXA throws 401', async () => {
       expect.assertions(3);
       // Arrange
-      const fsxaRemoteApi = new FSXARemoteApi(config);
+      const fsxaRemoteApi = new FSXARemoteApi(getFsxaConfig());
       const error = new Error(FSXAApiErrors.NOT_AUTHORIZED);
       const spy = (fsxaRemoteApi.fetchNavigation = jest.fn().mockRejectedValue(error));
       const api = new EcomRemoteApi(fsxaRemoteApi);
 
       const params = {
         initialPath: 'path',
-        locale: 'de',
+        locale: 'de_DE',
       } as FetchNavigationParams;
       // Act
       try {
@@ -337,7 +367,7 @@ describe('EcomRemoteApi', () => {
     it('throws an error if FSXA throws unkown error', async () => {
       expect.assertions(3);
       // Arrange
-      const fsxaRemoteApi = new FSXARemoteApi(config);
+      const fsxaRemoteApi = new FSXARemoteApi(getFsxaConfig());
       const error = new Error('UNKNOWN ERROR');
       const spy = (fsxaRemoteApi.fetchNavigation = jest.fn().mockRejectedValue(error));
       const api = new EcomRemoteApi(fsxaRemoteApi);
@@ -361,7 +391,8 @@ describe('EcomRemoteApi', () => {
   describe('findElement()', () => {
     it('throws an error if parameter "locale" is missing and no fallback is configured', async () => {
       // Arrange
-      const fsxaRemoteApi = new FSXARemoteApi(config);
+      const coreConfig = getTestCoreConfig();
+      const fsxaRemoteApi = new FSXARemoteApi(getFsxaConfig());
       const fetchElementResult = {};
       const spy = (fsxaRemoteApi.fetchElement = jest.fn().mockResolvedValue(fetchElementResult));
       const api = new EcomRemoteApi(fsxaRemoteApi);
@@ -378,9 +409,30 @@ describe('EcomRemoteApi', () => {
       }).rejects.toThrow('locale is undefined and no fallback is available');
       expect(spy).not.toHaveBeenCalled();
     });
+    it('throws an error if parameter "locale" is invalid', async () => {
+      // Arrange
+      const coreConfig = getTestCoreConfig();
+      const fsxaRemoteApi = new FSXARemoteApi(getFsxaConfig());
+      const fetchElementResult = {};
+      const spy = (fsxaRemoteApi.fetchElement = jest.fn().mockResolvedValue(fetchElementResult));
+      const api = new EcomRemoteApi(fsxaRemoteApi);
+
+      EcomConfig.applyConfig({ ...coreConfig, defaultLocale: undefined });
+
+      const params = {
+        fsPageId: '123',
+        locale: 'INVALID',
+      } as any as FindElementParams;
+      // Act
+      await expect(async () => {
+        return api.findElement(params);
+      }).rejects.toThrow(`Given locale '${params.locale}' is invalid`);
+      expect(spy).not.toHaveBeenCalled();
+    });
     it('proceeds if parameter "locale" is missing but a fallback is configured', async () => {
       // Arrange
-      const fsxaRemoteApi = new FSXARemoteApi(config);
+      const coreConfig = getTestCoreConfig();
+      const fsxaRemoteApi = new FSXARemoteApi(getFsxaConfig());
       const fetchElementResult = {};
       const spy = (fsxaRemoteApi.fetchElement = jest.fn().mockResolvedValue(fetchElementResult));
       const api = new EcomRemoteApi(fsxaRemoteApi);
@@ -401,7 +453,7 @@ describe('EcomRemoteApi', () => {
     });
     it('uses FSXA API instance to fetch the navigation', async () => {
       // Arrange
-      const fsxaRemoteApi = new FSXARemoteApi(config);
+      const fsxaRemoteApi = new FSXARemoteApi(getFsxaConfig());
       const fetchElementResult = {};
       const spy = (fsxaRemoteApi.fetchElement = jest.fn().mockResolvedValue(fetchElementResult));
       const api = new EcomRemoteApi(fsxaRemoteApi);
@@ -426,7 +478,7 @@ describe('EcomRemoteApi', () => {
     it('throws an error if FSXA throws 404', async () => {
       expect.assertions(3);
       // Arrange
-      const fsxaRemoteApi = new FSXARemoteApi(config);
+      const fsxaRemoteApi = new FSXARemoteApi(getFsxaConfig());
       const error = new Error(FSXAApiErrors.NOT_FOUND);
       const spy = (fsxaRemoteApi.fetchElement = jest.fn().mockRejectedValue(error));
       const api = new EcomRemoteApi(fsxaRemoteApi);
@@ -448,7 +500,7 @@ describe('EcomRemoteApi', () => {
     it('throws an error if FSXA throws 401', async () => {
       expect.assertions(3);
       // Arrange
-      const fsxaRemoteApi = new FSXARemoteApi(config);
+      const fsxaRemoteApi = new FSXARemoteApi(getFsxaConfig());
       const error = new Error(FSXAApiErrors.NOT_AUTHORIZED);
       const spy = (fsxaRemoteApi.fetchElement = jest.fn().mockRejectedValue(error));
       const api = new EcomRemoteApi(fsxaRemoteApi);
@@ -470,7 +522,7 @@ describe('EcomRemoteApi', () => {
     it('throws an error if FSXA throws unkown error', async () => {
       expect.assertions(3);
       // Arrange
-      const fsxaRemoteApi = new FSXARemoteApi(config);
+      const fsxaRemoteApi = new FSXARemoteApi(getFsxaConfig());
       const error = new Error('UNKNOWN ERROR');
       const spy = (fsxaRemoteApi.fetchElement = jest.fn().mockRejectedValue(error));
       const api = new EcomRemoteApi(fsxaRemoteApi);
@@ -488,6 +540,27 @@ describe('EcomRemoteApi', () => {
         expect(err).toBeInstanceOf(UnknownError);
         expect(err.message).toEqual('Failed to find element');
       }
+    });
+    it('returns null if FSXA returns no element (removeUntranslatedSections=true)', async () => {
+      // Arrange
+      const fsxaRemoteApi = new FSXARemoteApi(getFsxaConfig());
+      const fetchByFilterResult = null;
+      fsxaRemoteApi.fetchElement = jest.fn().mockResolvedValue(fetchByFilterResult);
+      const api = new EcomRemoteApi(fsxaRemoteApi);
+      const coreConfig = getTestCoreConfig();
+      coreConfig.project.removeUntranslatedSections = true;
+      EcomConfig.applyConfig(coreConfig);
+
+      const params = {
+        fsPageId: '123',
+        locale: 'de_DE',
+      } as FindElementParams;
+
+      // Act
+      const result = await api.findElement(params);
+
+      // Assert
+      expect(result).toBeNull();
     });
   });
 });

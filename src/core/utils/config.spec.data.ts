@@ -4,7 +4,7 @@ import { CoreConfig } from './config.meta';
 /**
  * @internal
  */
-export const coreConfig = {
+const coreConfig = {
   fsServerOrigin: 'https://example.org/FSServerOrigin',
   defaultLocale: 'de_DE',
   logLevel: LogLevel.DEBUG,
@@ -20,3 +20,11 @@ export const coreConfig = {
     tenantID: 'tenant-id',
   },
 } as CoreConfig;
+
+/**
+ * @internal
+ * @returns A deep copy of the example config.
+ */
+export const getTestCoreConfig = () => {
+  return JSON.parse(JSON.stringify(coreConfig)) as CoreConfig;
+};

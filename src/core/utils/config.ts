@@ -88,6 +88,17 @@ export namespace EcomConfig {
   };
 
   /**
+   *
+   * @internal
+   * @returns Whether the configuration to filter out untranslated sections is active.
+   */
+  export const isUntranslatedSectionFilterActive = () => {
+    const { removeUntranslatedSections } = coreConfig.project;
+
+    return removeUntranslatedSections ?? false;
+  };
+
+  /**
    * Several sanitization methods are possible.
    * For now, the removal of all trailing slashes are implemented.
    */

@@ -75,6 +75,7 @@ export const projectSchema = joi
     projectID: joi.string().uuid().required().label('Project ID').description('The ID of the CaaS project.'),
     tenantID: joi.string().required().label('Tenant ID').description('The tenant ID of the CaaS project.'),
     apiKey: apiKeySchema.required(),
+    removeUntranslatedSections: joi.boolean(),
   })
   .label('Project Config');
 

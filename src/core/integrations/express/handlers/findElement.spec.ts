@@ -1,4 +1,4 @@
-import { ItemNotFoundError, MissingParameterError, UnauthorizedError } from '../../../utils/errors';
+import { InvalidLocaleError, ItemNotFoundError, MissingParameterError, UnauthorizedError } from '../../../utils/errors';
 import { Logger, Logging, LogLevel } from '../../../utils/logging/Logger';
 import { generateRequestMock, generateResponseMock } from '../testUtils';
 import { findElement } from './findElement';
@@ -75,6 +75,27 @@ describe('findElement', () => {
     // Assert
     expect(loggerMock.error).toHaveBeenCalledWith('Unable to find element', error);
     expect(resMock.status).toHaveBeenCalledWith(404);
+  });
+  it('handles invalid locale error from API', async () => {
+    // Arrange
+    const resMock = generateResponseMock();
+    const reqMock = generateRequestMock();
+    const error = new InvalidLocaleError('ERROR');
+    findElementMock.mockImplementation(() => {
+      throw error;
+    });
+
+    // Act
+    await findElement(reqMock, resMock);
+
+    // Assert
+    expect(loggerMock.error).toHaveBeenCalledWith('Unable to find element', error);
+    expect(resMock.status).toHaveBeenCalledWith(400);
+    expect(resMock.json).toHaveBeenCalledWith(
+      expect.objectContaining({
+        error: 'ERROR',
+      })
+    );
   });
   it('handles not authorized error from API', async () => {
     // Arrange

@@ -1,3 +1,3 @@
-import { CaasApi_Item, MappedCaasItem } from "fsxa-api";
+import { Page } from 'fsxa-api';
 
-export type FetchResponseItem = MappedCaasItem | CaasApi_Item
+export type FetchResponseItem = Page;

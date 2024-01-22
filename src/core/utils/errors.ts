@@ -19,6 +19,21 @@ export class UnauthorizedError extends Error {
 }
 
 /**
+ * Error to reflect an invalid locale.
+ *
+ * @export
+ * @class InvalidLocaleError
+ */
+export class InvalidLocaleError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'InvalidLocaleError';
+    // Fix instanceof in jest, see https://www.dannyguo.com/blog/how-to-fix-instanceof-not-working-for-custom-errors-in-typescript
+    Object.setPrototypeOf(this, InvalidLocaleError.prototype);
+  }
+}
+
+/**
  * Error to represent a 404 from the FSXA.
  *
  * @export

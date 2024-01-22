@@ -1,6 +1,6 @@
 import { APIProvider } from './APIProvider';
 import { EcomConfig } from './config';
-import { coreConfig } from './config.spec.data';
+import { getTestCoreConfig } from './config.spec.data';
 
 jest.mock('../api/EcomRemoteApi', () => ({
   EcomRemoteApi: jest.fn(),
@@ -17,7 +17,10 @@ describe('APIProvider', () => {
       }).toThrow('APIProvider not initialized');
     });
     describe('positiveCases', () => {
-      beforeEach(() => EcomConfig.applyConfig(coreConfig));
+      beforeEach(() => {
+        const coreConfig = getTestCoreConfig();
+        EcomConfig.applyConfig(coreConfig);
+      });
       it('only creates one instance of the API', () => {
         // Arrange
         APIProvider.init(EcomConfig.getFSXAConfig());
@@ -47,7 +50,10 @@ describe('APIProvider', () => {
       }).toThrow('APIProvider not initialized');
     });
     describe('positiveCases', () => {
-      beforeEach(() => EcomConfig.applyConfig(coreConfig));
+      beforeEach(() => {
+        const coreConfig = getTestCoreConfig();
+        EcomConfig.applyConfig(coreConfig);
+      });
       it('only creates one instance of the API', () => {
         // Arrange
         APIProvider.init(EcomConfig.getFSXAConfig());

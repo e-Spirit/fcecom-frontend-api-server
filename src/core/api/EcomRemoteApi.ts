@@ -1,16 +1,12 @@
-import {
-  ComparisonQueryOperatorEnum,
-  FSXAApiErrors,
-  FSXARemoteApi,
-  LogicalQueryOperatorEnum,
-  NavigationData
-} from 'fsxa-api';
+import { ComparisonQueryOperatorEnum, FSXAApiErrors, FSXARemoteApi, LogicalQueryOperatorEnum, NavigationData, Section } from 'fsxa-api';
 import { FetchNavigationParams } from '../integrations/express/handlers/fetchNavigation';
 import { FindPageParams } from '../integrations/express/handlers/findPage';
-import { ItemNotFoundError, MissingParameterError, UnauthorizedError, UnknownError } from '../utils/errors';
+import { InvalidLocaleError, ItemNotFoundError, MissingParameterError, UnauthorizedError, UnknownError } from '../utils/errors';
 import { EcomConfig } from '../utils/config';
 import { FindElementParams } from '../integrations/express/handlers/findElement';
 import { FetchResponseItem } from './EcomRemoteApi.meta';
+import { getLogger } from '../utils/logging/getLogger';
+import { filterEmptySections } from '../utils/sectionFilter';
 
 /**
  * Server module of the Frontend API for Connect for Commerce.
@@ -35,31 +31,45 @@ export class EcomRemoteApi {
    */
   async findPage(params: FindPageParams): Promise<FetchResponseItem | null> {
     const { locale = EcomConfig.getDefaultLocale(), id, type } = params;
+    this.validateLocale(locale);
     if (typeof id === 'undefined') throw new MissingParameterError('id is undefined');
     if (typeof type === 'undefined') throw new MissingParameterError('type is undefined');
 
     try {
-      return (await this.fsxaRemoteApi.fetchByFilter({
-        filters: [
-          {
-            operator: LogicalQueryOperatorEnum.AND,
+      const page =
+        ((
+          await this.fsxaRemoteApi.fetchByFilter({
             filters: [
               {
-                field: 'page.formData.type.value',
-                operator: ComparisonQueryOperatorEnum.EQUALS,
-                value: type,
-              },
-              {
-                field: 'page.formData.id.value',
-                operator: ComparisonQueryOperatorEnum.EQUALS,
-                value: id,
+                operator: LogicalQueryOperatorEnum.AND,
+                filters: [
+                  {
+                    field: 'page.formData.type.value',
+                    operator: ComparisonQueryOperatorEnum.EQUALS,
+                    value: type,
+                  },
+                  {
+                    field: 'page.formData.id.value',
+                    operator: ComparisonQueryOperatorEnum.EQUALS,
+                    value: id,
+                  },
+                ],
               },
             ],
-          },
-        ],
-        locale,
-      })).items?.[0] as FetchResponseItem ?? null;
+            locale,
+          })
+        ).items?.[0] as FetchResponseItem) ?? null;
+
+      if (page && EcomConfig.isUntranslatedSectionFilterActive()) {
+        page.children = page.children.map((slot) => {
+          slot.children = filterEmptySections(slot.children as Section[]);
+          return slot;
+        });
+      }
+
+      return page;
     } catch (err: unknown) {
+      getLogger('EcomRemoteApi').error('Error during findPage', err);
       if (err instanceof Error) {
         if (err.message === FSXAApiErrors.NOT_FOUND) {
           throw new ItemNotFoundError('Failed to find page - not found');
@@ -79,12 +89,14 @@ export class EcomRemoteApi {
    */
   async fetchNavigation(params: FetchNavigationParams): Promise<NavigationData | null> {
     const { locale = EcomConfig.getDefaultLocale(), initialPath } = params;
+    this.validateLocale(locale);
     try {
       return await this.fsxaRemoteApi.fetchNavigation({
         initialPath,
         locale,
       });
     } catch (err: unknown) {
+      getLogger('EcomRemoteApi').error('Error during fetchNavigation', err);
       if (err instanceof Error) {
         if (err.message === FSXAApiErrors.NOT_FOUND) {
           throw new ItemNotFoundError('Failed to fetch navigation - not found');
@@ -104,14 +116,25 @@ export class EcomRemoteApi {
    */
   async findElement(params: FindElementParams): Promise<any> {
     const { locale = EcomConfig.getDefaultLocale(), fsPageId } = params;
+    this.validateLocale(locale);
     if (typeof fsPageId === 'undefined') throw new MissingParameterError('fsPageId is undefined');
 
     try {
-      return await this.fsxaRemoteApi.fetchElement({
+      const element = await this.fsxaRemoteApi.fetchElement({
         id: fsPageId,
         locale: locale,
       });
+
+      if (element && element.type === 'Page' && EcomConfig.isUntranslatedSectionFilterActive()) {
+        element.children = element.children.map((slot: any) => {
+          slot.children = filterEmptySections(slot.children as Section[]);
+          return slot;
+        });
+      }
+
+      return element;
     } catch (err: unknown) {
+      getLogger('EcomRemoteApi').error('Error during findElement', err);
       if (err instanceof Error) {
         if (err.message === FSXAApiErrors.NOT_FOUND) {
           throw new ItemNotFoundError('Failed to find element - not found');
@@ -121,5 +144,20 @@ export class EcomRemoteApi {
       }
       throw new UnknownError('Failed to find element');
     }
+  }
+
+  /**
+   * Validates the given locale by checking if it matches the xx_YY format.
+   * Throws an error if something invalid is passed.
+   *
+   * @private
+   * @param locale
+   * @return {*}
+   */
+  private validateLocale(locale: string): boolean {
+    if (!/[a-z]{2}_[A-Z]{2}/.exec(locale)) {
+      throw new InvalidLocaleError(`Given locale '${locale}' is invalid`);
+    }
+    return true;
   }
 }

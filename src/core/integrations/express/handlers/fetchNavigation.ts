@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { getLogger } from '../../../utils/logging/getLogger';
 import { getApi } from '../../../utils/apiSelector';
 import { extractParamsFromRequest } from '../helper';
-import { ItemNotFoundError, MissingDefaultLocaleError, MissingParameterError, UnauthorizedError } from '../../../utils/errors';
+import { InvalidLocaleError, ItemNotFoundError, MissingDefaultLocaleError, MissingParameterError, UnauthorizedError } from '../../../utils/errors';
 
 /**
  * Parameters to fetch the navigation.
@@ -43,7 +43,7 @@ export const fetchNavigation = async (req: Request, res: Response): Promise<Resp
       return res.status(401).send();
     } else if (err instanceof ItemNotFoundError) {
       return res.status(404).send();
-    } else if (err instanceof MissingDefaultLocaleError || err instanceof MissingParameterError) {
+    } else if (err instanceof MissingDefaultLocaleError || err instanceof MissingParameterError || err instanceof InvalidLocaleError) {
       return res.status(400).json({ error: err.message });
     }
     return res.status(500).send();

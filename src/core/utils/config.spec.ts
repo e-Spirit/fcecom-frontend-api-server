@@ -1,6 +1,6 @@
 import { EcomConfig } from './config';
 import { Logger, Logging, LogLevel } from './logging/Logger';
-import { coreConfig } from './config.spec.data';
+import { getTestCoreConfig } from './config.spec.data';
 import { CoreConfig } from './config.meta';
 import { MissingDefaultLocaleError } from './errors';
 import set from 'lodash.set';
@@ -16,7 +16,7 @@ describe('config', () => {
   describe('setConfig', () => {
     it('uses defaults for omitted values', () => {
       // Arrange
-      const testConfig = coreConfig;
+      const testConfig = getTestCoreConfig();
 
       // @ts-ignore
       delete testConfig.logLevel;
@@ -37,7 +37,7 @@ describe('config', () => {
     });
     it('uses defaults for empty values', () => {
       // Arrange
-      const testConfig = coreConfig;
+      const testConfig = getTestCoreConfig();
 
       // @ts-ignore
       testConfig.project.apiKey.preview = '';
@@ -107,6 +107,7 @@ describe('config', () => {
       expect(() => EcomConfig.applyConfig(testConfig)).toThrow('API key configuration not found');
     });
     it('does accept configuration object containing additional parameters', () => {
+      const coreConfig = getTestCoreConfig();
       expect(() => {
         // Arrange & Act
         EcomConfig.applyConfig({ ...coreConfig, foo: 'bar' } as any);
@@ -120,6 +121,7 @@ describe('config', () => {
   describe('getCoreConfig', () => {
     it('returns the core config', () => {
       // Arrange
+      const coreConfig = getTestCoreConfig();
       EcomConfig.applyConfig(coreConfig);
       // Act
       const result = EcomConfig.getCoreConfig();
@@ -130,6 +132,7 @@ describe('config', () => {
 
   describe('getFSXAConfig', () => {
     it('returns the FSXAConfig config', () => {
+      const coreConfig = getTestCoreConfig();
       // Arrange
       EcomConfig.applyConfig(coreConfig);
       // Act
@@ -159,6 +162,7 @@ describe('config', () => {
   describe('getDefaultLocale', () => {
     it('returns correct default locale', () => {
       // Arrange
+      const coreConfig = getTestCoreConfig();
       EcomConfig.applyConfig({ ...coreConfig, defaultLocale: 'en_GB' });
       // Act
       const { defaultLocale } = EcomConfig.getCoreConfig();
@@ -171,6 +175,7 @@ describe('config', () => {
 
     it('throws error if default locale is not set', () => {
       // Arrange
+      const coreConfig = getTestCoreConfig();
       EcomConfig.applyConfig({ ...coreConfig, defaultLocale: undefined });
       const expectedError = new MissingDefaultLocaleError('locale is undefined and no fallback is available');
       // Act
@@ -211,6 +216,7 @@ describe('config', () => {
   describe('sanitizeProperty', () => {
     it('sanitizes property by applying a sanitization function', () => {
       // Arrange
+      const coreConfig = getTestCoreConfig();
       EcomConfig.coreConfig = coreConfig;
 
       const initialValue = 'initialValue';
@@ -230,6 +236,7 @@ describe('config', () => {
 
     it('logs an error and uses initial value if the sanitization function does return undefined or null', () => {
       // Arrange
+      const coreConfig = getTestCoreConfig();
       EcomConfig.coreConfig = coreConfig;
 
       const initialValue = 'initialValue';
@@ -267,6 +274,38 @@ describe('config', () => {
       expect(debugSpy.mock.calls[0][0]).toContain('{"originalValue":"initialValue"}');
       // language=JSON
       expect(debugSpy.mock.calls[1][0]).toContain('{"originalValue":"initialValue","sanitizedProperty":null}');
+    });
+  });
+  describe('isUntranslatedSectionFilterActive', () => {
+    it('returns the value of the removeUntranslatedSections config', () => {
+      // Arrange
+      const coreConfig = getTestCoreConfig();
+      const testConfig = coreConfig;
+      // @ts-ignore
+      testConfig.project.removeUntranslatedSections = true;
+
+      EcomConfig.applyConfig(testConfig);
+
+      // Act
+      const result = EcomConfig.isUntranslatedSectionFilterActive();
+
+      // Assert
+      expect(result).toEqual(true);
+    });
+    it('uses false as a fallback for missing removeUntranslatedSections', () => {
+      // Arrange
+      const coreConfig = getTestCoreConfig();
+      const testConfig = coreConfig;
+      // @ts-ignore
+      testConfig.project.removeUntranslatedSections = undefined;
+
+      EcomConfig.applyConfig(testConfig);
+
+      // Act
+      const result = EcomConfig.isUntranslatedSectionFilterActive();
+
+      // Assert
+      expect(result).toEqual(false);
     });
   });
 });

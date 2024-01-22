@@ -1,4 +1,4 @@
-import { ItemNotFoundError, MissingParameterError, UnauthorizedError } from '../../../utils/errors';
+import { InvalidLocaleError, ItemNotFoundError, MissingParameterError, UnauthorizedError } from '../../../utils/errors';
 import { Logger, Logging, LogLevel } from '../../../utils/logging/Logger';
 import { generateRequestMock, generateResponseMock } from '../testUtils';
 import { fetchNavigation } from './fetchNavigation';
@@ -44,6 +44,27 @@ describe('fetchNavigation', () => {
     const resMock = generateResponseMock();
     const reqMock = generateRequestMock();
     const error = new MissingParameterError('ERROR');
+    fetchNavigationMock.mockImplementation(() => {
+      throw error;
+    });
+
+    // Act
+    await fetchNavigation(reqMock, resMock);
+
+    // Assert
+    expect(loggerMock.error).toHaveBeenCalledWith('Unable to fetch navigation', error);
+    expect(resMock.status).toHaveBeenCalledWith(400);
+    expect(resMock.json).toHaveBeenCalledWith(
+      expect.objectContaining({
+        error: 'ERROR',
+      })
+    );
+  });
+  it('handles invalid locale error from API', async () => {
+    // Arrange
+    const resMock = generateResponseMock();
+    const reqMock = generateRequestMock();
+    const error = new InvalidLocaleError('ERROR');
     fetchNavigationMock.mockImplementation(() => {
       throw error;
     });
