@@ -1,3 +1,8 @@
+## [0.24.0](https://github.com/e-Spirit/fcecom-frontend-api-server/compare/v0.23.0...v0.24.0) (2024-02-12)
+
+### Changes
+* Fixed security vulnerabilities located in lodash (CVE-2020-8203) and semver (CVE-2022-25883) by updating the relevant dependencies.
+
 ## [0.23.0](https://github.com/e-Spirit/fcecom-frontend-api-server/compare/v0.22.0...v0.23.0) (2024-01-30)
 
 ### Changes

@@ -2,8 +2,8 @@ import { FSXAContentMode } from 'fsxa-api';
 import { CoreConfig, FSXAConfig } from './config.meta';
 import { Logger, Logging, LogLevel } from './logging/Logger';
 import { InvalidConfigurationError, MissingDefaultLocaleError } from './errors';
-import set from 'lodash.set';
-import get from 'lodash.get';
+import { set } from 'lodash';
+import { get } from 'lodash';
 import { validateCoreConfig } from './configValidation';
 
 export namespace EcomConfig {

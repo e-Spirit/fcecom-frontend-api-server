@@ -3,8 +3,8 @@ import { Logger, Logging, LogLevel } from './logging/Logger';
 import { getTestCoreConfig } from './config.spec.data';
 import { CoreConfig } from './config.meta';
 import { MissingDefaultLocaleError } from './errors';
-import set from 'lodash.set';
-import get from 'lodash.get';
+import { set } from 'lodash';
+import { get } from 'lodash';
 import Mock = jest.Mock;
 
 let loggerMock: Logger = new Logger('');
