@@ -12,7 +12,7 @@ import { InvalidLocaleError, ItemNotFoundError, MissingDefaultLocaleError, Missi
  */
 export type FetchNavigationParams = {
   /**
-   * Locale to get navigation in.
+   * Locale to get the navigation in.
    * If omitted, a default locale has to be provided.
    */
   locale?: string;
@@ -36,7 +36,7 @@ export const fetchNavigation = async (req: Request, res: Response): Promise<Resp
   logger.debug('GET request query', req.query);
 
   try {
-    return res.json(await getApi(req).fetchNavigation(extractParamsFromRequest<FetchNavigationParams>(req)));
+    return res.json(await (await getApi(req)).fetchNavigation(extractParamsFromRequest<FetchNavigationParams>(req)));
   } catch (err: unknown) {
     logger.error('Unable to fetch navigation', err);
     if (err instanceof UnauthorizedError) {

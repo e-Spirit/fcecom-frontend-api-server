@@ -8,7 +8,16 @@ jest.mock('../../../utils/apiSelector', () => {
       contentMode,
     };
   });
-  return { getApi };
+  return {
+    getApi,
+  };
+});
+jest.mock('../../../utils/previewDecider', () => {
+  return {
+    PreviewDecider: {
+      isPreview: () => contentMode === 'preview',
+    },
+  };
 });
 
 describe('isPreview', () => {

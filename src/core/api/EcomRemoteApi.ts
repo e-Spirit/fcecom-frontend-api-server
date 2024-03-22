@@ -1,4 +1,15 @@
-import { ComparisonQueryOperatorEnum, FSXAApiErrors, FSXARemoteApi, LogicalQueryOperatorEnum, NavigationData, Section } from 'fsxa-api';
+import {
+  ComparisonQueryOperatorEnum,
+  Dataset,
+  FSXAApiErrors,
+  FSXARemoteApi,
+  GCAPage,
+  Image,
+  LogicalQueryOperatorEnum,
+  NavigationData,
+  Page,
+  Section,
+} from 'fsxa-api';
 import { FetchNavigationParams } from '../integrations/express/handlers/fetchNavigation';
 import { FindPageParams } from '../integrations/express/handlers/findPage';
 import { InvalidLocaleError, ItemNotFoundError, MissingParameterError, UnauthorizedError, UnknownError } from '../utils/errors';
@@ -7,6 +18,7 @@ import { FindElementParams } from '../integrations/express/handlers/findElement'
 import { FetchResponseItem } from './EcomRemoteApi.meta';
 import { getLogger } from '../utils/logging/getLogger';
 import { filterEmptySections } from '../utils/sectionFilter';
+import { DataTransformer, Transformer } from '../../extendibles/dataTransformer';
 
 /**
  * Server module of the Frontend API for Connect for Commerce.
@@ -67,7 +79,7 @@ export class EcomRemoteApi {
         });
       }
 
-      return page;
+      return DataTransformer.applyTransformer(Transformer.FIND_PAGE, page);
     } catch (err: unknown) {
       getLogger('EcomRemoteApi').error('Error during findPage', err);
       if (err instanceof Error) {
@@ -91,10 +103,12 @@ export class EcomRemoteApi {
     const { locale = EcomConfig.getDefaultLocale(), initialPath } = params;
     this.validateLocale(locale);
     try {
-      return await this.fsxaRemoteApi.fetchNavigation({
+      const navigation = await this.fsxaRemoteApi.fetchNavigation({
         initialPath,
         locale,
       });
+
+      return DataTransformer.applyTransformer(Transformer.FETCH_NAVIGATION, navigation);
     } catch (err: unknown) {
       getLogger('EcomRemoteApi').error('Error during fetchNavigation', err);
       if (err instanceof Error) {
@@ -114,7 +128,7 @@ export class EcomRemoteApi {
    * @param params Parameters to use to find the element.
    * @return {*} Details about the element.
    */
-  async findElement(params: FindElementParams): Promise<any> {
+  async findElement<T = Page | GCAPage | Dataset | Image | any | null>(params: FindElementParams): Promise<T> {
     const { locale = EcomConfig.getDefaultLocale(), fsPageId } = params;
     this.validateLocale(locale);
     if (typeof fsPageId === 'undefined') throw new MissingParameterError('fsPageId is undefined');
@@ -132,7 +146,7 @@ export class EcomRemoteApi {
         });
       }
 
-      return element;
+      return DataTransformer.applyTransformer(Transformer.FIND_ELEMENT, element);
     } catch (err: unknown) {
       getLogger('EcomRemoteApi').error('Error during findElement', err);
       if (err instanceof Error) {

@@ -6,6 +6,7 @@ import { EcomConfig } from '../utils/config';
 import { getTestCoreConfig } from '../utils/config.spec.data';
 import { FindElementParams } from '../integrations/express/handlers/findElement';
 import { ItemNotFoundError, UnauthorizedError, UnknownError } from '../utils/errors';
+import { DataTransformer, Transformer } from '../../extendibles/dataTransformer';
 
 const fsxaConfig = {
   apikey: 'APIKEY',
@@ -19,6 +20,27 @@ const fsxaConfig = {
 const getFsxaConfig = () => {
   return JSON.parse(JSON.stringify(fsxaConfig));
 };
+
+jest.mock('../../extendibles/dataTransformer', () => {
+  const DataTransformer = {
+    applyTransformer: jest.fn().mockImplementation((_transformer, data) => data),
+  };
+  const original = jest.requireActual('../../extendibles/dataTransformer');
+  return {
+    ...original,
+    DataTransformer,
+  };
+});
+
+jest.mock('../utils/config', () => {
+  const original = jest.requireActual('../utils/config');
+  return {
+    EcomConfig: {
+      ...original.EcomConfig,
+      isUntranslatedSectionFilterActive: () => false,
+    },
+  };
+});
 
 describe('EcomRemoteApi', () => {
   describe('constructor()', () => {
@@ -121,7 +143,8 @@ describe('EcomRemoteApi', () => {
     it('uses FSXA API instance to find a page', async () => {
       // Arrange
       const fsxaRemoteApi = new FSXARemoteApi(getFsxaConfig());
-      const fetchByFilterResult = { items: [] };
+      const fetchByFilterResultItem = { children: [] };
+      const fetchByFilterResult = { items: [fetchByFilterResultItem] };
       const spy = (fsxaRemoteApi.fetchByFilter = jest.fn().mockResolvedValue(fetchByFilterResult));
       const api = new EcomRemoteApi(fsxaRemoteApi);
 
@@ -135,7 +158,7 @@ describe('EcomRemoteApi', () => {
       const result = await api.findPage(params);
 
       // Assert
-      expect(result).toBeNull();
+      expect(result).toBe(fetchByFilterResultItem);
       expect(spy).toHaveBeenNthCalledWith(
         1,
         expect.objectContaining({
@@ -159,6 +182,27 @@ describe('EcomRemoteApi', () => {
           locale: params.locale,
         })
       );
+    });
+    it('applies data transformation', async () => {
+      // Arrange
+      const fsxaRemoteApi = new FSXARemoteApi(getFsxaConfig());
+      const fetchByFilterResultItem = { children: [] };
+      const fetchByFilterResult = { items: [fetchByFilterResultItem] };
+      const spy = (fsxaRemoteApi.fetchByFilter = jest.fn().mockResolvedValue(fetchByFilterResult));
+      const api = new EcomRemoteApi(fsxaRemoteApi);
+
+      const params = {
+        id: '123',
+        locale: 'de_DE',
+        type: 'product',
+      } as FindPageParams;
+
+      // Act
+      const result = await api.findPage(params);
+      // Assert
+      expect(result).toEqual(fetchByFilterResultItem);
+      expect(spy).toHaveBeenCalled();
+      expect(DataTransformer.applyTransformer).toHaveBeenCalledWith(Transformer.FIND_PAGE, fetchByFilterResultItem);
     });
     it('throws an error if FSXA throws 404', async () => {
       expect.assertions(3);
@@ -320,6 +364,25 @@ describe('EcomRemoteApi', () => {
         })
       );
     });
+    it('applies data transformation', async () => {
+      // Arrange
+      const fsxaRemoteApi = new FSXARemoteApi(getFsxaConfig());
+      const fetchNavigationResult = {};
+      const spy = (fsxaRemoteApi.fetchNavigation = jest.fn().mockResolvedValue(fetchNavigationResult));
+      const api = new EcomRemoteApi(fsxaRemoteApi);
+
+      // Act
+      const params = {
+        initialPath: 'path',
+        locale: 'de_DE',
+      } as FetchNavigationParams;
+      const result = await api.fetchNavigation(params);
+
+      // Assert
+      expect(result).toEqual(fetchNavigationResult);
+      expect(spy).toHaveBeenCalled();
+      expect(DataTransformer.applyTransformer).toHaveBeenCalledWith(Transformer.FETCH_NAVIGATION, fetchNavigationResult);
+    });
     it('throws an error if FSXA throws 404', async () => {
       expect.assertions(3);
       // Arrange
@@ -474,6 +537,25 @@ describe('EcomRemoteApi', () => {
           id: params.fsPageId,
         })
       );
+    });
+    it('applies data transformation', async () => {
+      // Arrange
+      const fsxaRemoteApi = new FSXARemoteApi(getFsxaConfig());
+      const fetchElementResult = {};
+      const spy = (fsxaRemoteApi.fetchElement = jest.fn().mockResolvedValue(fetchElementResult));
+      const api = new EcomRemoteApi(fsxaRemoteApi);
+
+      // Act
+      const params = {
+        fsPageId: '213',
+        locale: 'de_DE',
+      } as FindElementParams;
+      const result = await api.findElement(params);
+
+      // Assert
+      expect(result).toEqual(fetchElementResult);
+      expect(spy).toHaveBeenCalled();
+      expect(DataTransformer.applyTransformer).toHaveBeenCalledWith(Transformer.FIND_ELEMENT, fetchElementResult);
     });
     it('throws an error if FSXA throws 404', async () => {
       expect.assertions(3);

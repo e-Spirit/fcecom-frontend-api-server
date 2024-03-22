@@ -40,7 +40,7 @@ export const findPage = async (req: Request<any, any>, res: Response): Promise<R
   logger.debug('GET request query', req.query);
 
   try {
-    return res.json(await getApi(req).findPage(extractParamsFromRequest<FindPageParams>(req)));
+    return res.json(await (await getApi(req)).findPage(extractParamsFromRequest<FindPageParams>(req)));
   } catch (err: unknown) {
     logger.error('Unable to find page', err);
     if (err instanceof UnauthorizedError) {

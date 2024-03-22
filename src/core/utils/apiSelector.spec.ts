@@ -24,35 +24,43 @@ jest.mock('./config', () => {
     },
   };
 });
+let isPreview = false;
+jest.mock('./previewDecider', () => {
+  return {
+    PreviewDecider: {
+      isPreview: (req: any) => req.header('x-referrer') === FS_SERVER_ORIGIN,
+    },
+  };
+});
 
 describe('apiSelector', () => {
   describe('getApi()', () => {
-    it('returns preview API when referrer matches', () => {
+    it('returns preview API when referrer matches', async () => {
       // Arrange
       const reqMoq = generateRequestMock();
       reqMoq.header = ((headerName: string) => (headerName === 'x-referrer' ? FS_SERVER_ORIGIN : '')) as any;
       // Act
       const result = getApi(reqMoq);
       // Assert
-      expect(result).toBe(previewApiMock);
+      await expect(result).resolves.toBe(previewApiMock);
     });
-    it('returns release API when referrer does not match', () => {
+    it('returns release API when referrer does not match', async () => {
       // Arrange
       const reqMoq = generateRequestMock();
       reqMoq.header = ((headerName: string) => (headerName === 'x-referrer' ? 'http://someotherurl' : '')) as any;
       // Act
       const result = getApi(reqMoq);
       // Assert
-      expect(result).toBe(releaseApiMock);
+      await expect(result).resolves.toBe(releaseApiMock);
     });
-    it('returns release API as fallback', () => {
+    it('returns release API as fallback', async () => {
       // Arrange
       const reqMoq = generateRequestMock();
       reqMoq.header = ((headerName: string) => (headerName === 'x-referrer' ? '---TOTALY INVALID URL' : '')) as any;
       // Act
       const result = getApi(reqMoq);
       // Assert
-      expect(result).toBe(releaseApiMock);
+      await expect(result).resolves.toBe(releaseApiMock);
     });
   });
 });

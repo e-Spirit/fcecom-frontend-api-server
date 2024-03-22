@@ -36,7 +36,7 @@ export const findElement = async (req: Request<any, any>, res: Response): Promis
   logger.debug('GET request query', req.query);
 
   try {
-    return res.json(await getApi(req).findElement(extractParamsFromRequest<FindElementParams>(req)));
+    return res.json(await (await getApi(req)).findElement(extractParamsFromRequest<FindElementParams>(req)));
   } catch (err: unknown) {
     logger.error('Unable to find element', err);
     if (err instanceof UnauthorizedError) {

@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { getApi } from '../../../utils/apiSelector';
+import { PreviewDecider } from '../../../utils/previewDecider';
 
 /**
  * Handler to use for the ispreview route.
@@ -11,7 +11,7 @@ import { getApi } from '../../../utils/apiSelector';
  */
 export const isPreview = async (req: Request, res: Response): Promise<Response> =>
   res.json({
-    isPreview: getApi(req).contentMode === 'preview',
+    isPreview: await PreviewDecider.isPreview(req),
   });
 
 /**
