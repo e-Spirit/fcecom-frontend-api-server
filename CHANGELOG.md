@@ -1,3 +1,10 @@
+## [1.0.0](https://github.com/e-Spirit/fcecom-frontend-api-server/compare/v0.25.0...v1.0.0) (2024-05-17)
+
+### Changes
+* Added the ability to configure FirstSpirit remote projects.
+* Improved compatibility with custom Frontend API Backends for projects not using express.js.
+* Frontend API is now generally available.
+
 ## [0.25.0](https://github.com/e-Spirit/fcecom-frontend-api-server/compare/v0.24.0...v0.25.0) (2024-03-22)
 
 ### Changes

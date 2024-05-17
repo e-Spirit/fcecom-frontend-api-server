@@ -7,3 +7,7 @@ export { DataTransformer, Transformer, TransformerParameters } from './extendibl
 export { EcomConfig } from './core/utils/config';
 export { FetchResponseItem } from './core/api/EcomRemoteApi.meta';
 export { Page, NavigationData } from 'fsxa-api';
+export { APIProvider } from './core/utils/APIProvider';
+export { EcomRemoteApi } from './core/api/EcomRemoteApi';
+export * from './core/utils/errors';
+export { FindPageParams, FindElementParams, FetchNavigationParams } from './core/integrations/express/handlers';

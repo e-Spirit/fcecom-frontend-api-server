@@ -13,3 +13,6 @@ export const MASTER_KEY_DESCRIPTION = 'Master API key for both viewing modes. Al
 // API key Config
 export const KEY_CONFIG_LABEL = 'API Key Config';
 export const KEY_CONFIG_DESCRIPTION = 'The API key of the CaaS instance for different viewing modes.';
+
+// Patterns
+export const localePattern = /^[a-z]{2}_[A-Z]{2}$/;

@@ -66,6 +66,22 @@ describe('previewDecider', () => {
         expect(customIsPreviewMock).toHaveBeenCalledWith(reqMoq);
         expect(result).toBe(true);
       });
+      it('uses registered custom decider with custom arguments amount', async () => {
+        // Arrange
+        const defaultPreviewDeciderMock = jest.spyOn(DefaultPreviewDecider, 'isPreview');
+        const customIsPreviewMock = jest.fn().mockImplementation((req: Request, arg1: string, arg2: string) => false);
+        const customDecider = {
+          isPreview: customIsPreviewMock,
+        } as PreviewDeciderTemplate;
+        const reqMoq = generateRequestMock();
+        PreviewDecider.registerDecider(customDecider);
+        // Act
+        const result = await PreviewDecider.isPreview(reqMoq, 'foo', 'bar');
+        // Assert
+        expect(defaultPreviewDeciderMock).not.toHaveBeenCalled();
+        expect(customIsPreviewMock).toHaveBeenCalledWith(reqMoq, 'foo', 'bar');
+        expect(result).toBe(false);
+      });
     });
     describe('useDefaultDecider()', () => {
       it('removes previously registered custom decider', async () => {

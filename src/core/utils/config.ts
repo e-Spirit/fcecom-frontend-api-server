@@ -2,8 +2,7 @@ import { FSXAContentMode } from 'fsxa-api';
 import { CoreConfig, FSXAConfig } from './config.meta';
 import { Logger, Logging, LogLevel } from './logging/Logger';
 import { InvalidConfigurationError, MissingDefaultLocaleError } from './errors';
-import { set } from 'lodash';
-import { get } from 'lodash';
+import { get, set } from 'lodash';
 import { validateCoreConfig } from './configValidation';
 
 export namespace EcomConfig {
@@ -36,8 +35,8 @@ export namespace EcomConfig {
 
     const { master, preview, release } = coreConfig.project.apiKey;
 
-    const previewApikey = preview || master;
-    const releaseApikey = release || master;
+    const previewApikey = preview || master!;
+    const releaseApikey = release || master!;
 
     coreConfig.project.apiKey = { master, preview: previewApikey, release: releaseApikey };
 
@@ -69,9 +68,14 @@ export namespace EcomConfig {
     } = coreConfig.project;
 
     const project = { projectID, caasURL, navigationServiceURL, tenantID };
+    const logLevel = coreConfig.logLevel;
+
+    let remotes = undefined;
+    if (coreConfig.project.remotes !== null) remotes = coreConfig.project.remotes;
+
     return {
-      preview: { ...project, apikey: previewApiKey, contentMode: FSXAContentMode.PREVIEW, logLevel: coreConfig.logLevel },
-      release: { ...project, apikey: releaseApiKey, contentMode: FSXAContentMode.RELEASE, logLevel: coreConfig.logLevel },
+      preview: { ...project, apikey: previewApiKey, contentMode: FSXAContentMode.PREVIEW, logLevel, remotes },
+      release: { ...project, apikey: releaseApiKey, contentMode: FSXAContentMode.RELEASE, logLevel, remotes },
     };
   };
 

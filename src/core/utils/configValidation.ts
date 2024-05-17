@@ -4,6 +4,7 @@ import { getLogger } from './logging/getLogger';
 import {
   KEY_CONFIG_DESCRIPTION,
   KEY_CONFIG_LABEL,
+  localePattern,
   MASTER_KEY_DESCRIPTION,
   MASTER_KEY_NAME,
   PREVIEW_KEY_DESCRIPTION,
@@ -58,6 +59,28 @@ export const apiKeySchema = joi
   .description(KEY_CONFIG_DESCRIPTION);
 
 /**
+ * Schema to validate the remote configuration.
+ *
+ * @internal
+ */
+export const remotesSchema = joi
+  .object()
+  .pattern(
+    joi.string(),
+    joi.object({
+      id: joi.string().uuid().required().label('Remote Project ID').description('The ID of the remote project.'),
+      locale: joi
+        .string()
+        .regex(localePattern) // de_DE
+        .label('Remote Project Locale')
+        .required()
+        .description(`The locale used by the remote project. Make sure to use the master locale. Has to have format like in 'de_DE'`),
+    })
+  )
+  .allow(null)
+  .label('Remotes Config');
+
+/**
  * Schema to validate the project configuration.
  *
  * @internal
@@ -73,6 +96,7 @@ export const projectSchema = joi
       .description('The URL of the navigation service.'),
     caasURL: joi.string().uri({ allowRelative: false }).required().label('CaaS URL').description('The URL of the CaaS instance.'),
     projectID: joi.string().uuid().required().label('Project ID').description('The ID of the CaaS project.'),
+    remotes: remotesSchema.optional(),
     tenantID: joi.string().required().label('Tenant ID').description('The tenant ID of the CaaS project.'),
     apiKey: apiKeySchema.required(),
     removeUntranslatedSections: joi.boolean(),
@@ -94,7 +118,7 @@ export const coreSchema = joi
     defaultLocale: joi
       .string()
       .optional()
-      .regex(/^[a-z]{2}_[A-Z]{2}$/) // de_DE
+      .regex(localePattern) // de_DE
       .label('Default Locale')
       .description(`A fallback locale used if any request is received without explicit locale. Has to have format like in 'de_DE'`),
     logLevel: joi

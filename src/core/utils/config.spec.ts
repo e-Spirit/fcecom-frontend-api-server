@@ -3,9 +3,9 @@ import { Logger, Logging, LogLevel } from './logging/Logger';
 import { getTestCoreConfig } from './config.spec.data';
 import { CoreConfig } from './config.meta';
 import { MissingDefaultLocaleError } from './errors';
-import { set } from 'lodash';
-import { get } from 'lodash';
+import { get, set } from 'lodash';
 import Mock = jest.Mock;
+import { localePattern } from './configValidation.data';
 
 let loggerMock: Logger = new Logger('');
 loggerMock.error = jest.fn();
@@ -35,6 +35,21 @@ describe('config', () => {
       expect(result.project.apiKey.preview).toEqual('0b099fe4-f040-405b-b0cf-5e6af08c0593');
       expect(result.project.apiKey.release).toEqual('0b099fe4-f040-405b-b0cf-5e6af08c0593');
     });
+    it('throws an error if neither preview / release nor master key is set', () => {
+      // Arrange
+      const testConfig = getTestCoreConfig();
+
+      delete testConfig.project.apiKey.master;
+      // @ts-ignore
+      delete testConfig.project.apiKey.preview;
+      // @ts-ignore
+      delete testConfig.project.apiKey.release;
+
+      // Act && Assert
+      expect(() => EcomConfig.applyConfig(testConfig)).toThrow('Validation of configuration failed. Please check your config.');
+
+      expect((loggerMock.error as Mock).mock.calls).toEqual([['project.apiKey', '"API Key Config" does not match any of the allowed types']]);
+    });
     it('uses defaults for empty values', () => {
       // Arrange
       const testConfig = getTestCoreConfig();
@@ -58,15 +73,22 @@ describe('config', () => {
   describe('validateConfig', () => {
     it('logs validation errors', () => {
       // Arrange
+      const defaultLocale = 'de';
       const testConfig: Partial<CoreConfig> = {
         fsServerOrigin: 'ORIGIN',
-        defaultLocale: 'de',
+        defaultLocale,
         logLevel: LogLevel.DEBUG,
         project: {
           apiKey: {
             master: 'MASTER',
             preview: 'PREVIEW',
             release: 'RELEASE',
+          },
+          remotes: {
+            media: {
+              locale: defaultLocale,
+              id: 'REMOTE_ID',
+            },
           },
           caasURL: 'CAASURL',
           navigationServiceURL: 'NAVIGATIONSERVICEURL',
@@ -81,10 +103,12 @@ describe('config', () => {
 
       expect((loggerMock.error as Mock).mock.calls).toEqual([
         ['fsServerOrigin', '"FirstSpirit Server Origin" must be a valid uri'],
-        ['defaultLocale', '"Default Locale" with value "de" fails to match the required pattern: /^[a-z]{2}_[A-Z]{2}$/'],
+        ['defaultLocale', `"Default Locale" with value "de" fails to match the required pattern: ${localePattern}`],
         ['project.navigationServiceURL', '"Navigation Service URL" must be a valid uri'],
         ['project.caasURL', '"CaaS URL" must be a valid uri'],
         ['project.projectID', '"Project ID" must be a valid GUID'],
+        ['project.remotes.media.id', '"Remote Project ID" must be a valid GUID'],
+        ['project.remotes.media.locale', '"Remote Project Locale" with value "de" fails to match the required pattern: /^[a-z]{2}_[A-Z]{2}$/'],
         ['project.apiKey', '"API Key Config" does not match any of the allowed types'],
       ]);
     });
@@ -144,6 +168,7 @@ describe('config', () => {
         navigationServiceURL: coreConfig.project.navigationServiceURL,
         tenantID: coreConfig.project.tenantID,
         apikey: coreConfig.project.apiKey.preview,
+        remotes: coreConfig.project.remotes,
         contentMode: 'preview',
         logLevel: coreConfig.logLevel,
       });
@@ -153,6 +178,7 @@ describe('config', () => {
         navigationServiceURL: coreConfig.project.navigationServiceURL,
         tenantID: coreConfig.project.tenantID,
         apikey: coreConfig.project.apiKey.release,
+        remotes: coreConfig.project.remotes,
         contentMode: 'release',
         logLevel: coreConfig.logLevel,
       });

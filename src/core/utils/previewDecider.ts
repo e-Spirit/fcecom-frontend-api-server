@@ -74,10 +74,14 @@ export namespace PreviewDecider {
    * Otherwise, the DefaultPreviewDecider will be used.
    *
    * @internal
-   * @param req Request to provide to the decision function.
+   * @param params dynamic params for custom previewDecider implementation.
+   *               Uses the first argument for the default PreviewDecider,
+   *               assuming it as an express request object.
    */
-  export const isPreview = async (req: Request<any, any, any>): Promise<boolean> =>
-    (await customPreviewDecider?.isPreview(req)) ?? (await DefaultPreviewDecider.isPreview(req));
+  export const isPreview = async (...params: any): Promise<boolean> => {
+    if (customPreviewDecider?.isPreview) return customPreviewDecider?.isPreview(...params);
+    else return DefaultPreviewDecider.isPreview(params[0] as Request<any, any, any>);
+  };
 }
 
 /**
@@ -86,5 +90,5 @@ export namespace PreviewDecider {
  * @interface PreviewDeciderTemplate
  */
 export interface PreviewDeciderTemplate {
-  isPreview(req: Request<any, any, any>): Promise<boolean>;
+  isPreview(...params: any): Promise<boolean>;
 }

@@ -1,4 +1,4 @@
-import { FSXARemoteApiConfig } from 'fsxa-api';
+import { FSXARemoteApiConfig, RemoteProjectConfiguration } from 'fsxa-api';
 import { LogLevel } from './logging/Logger';
 
 /**
@@ -10,8 +10,9 @@ import { LogLevel } from './logging/Logger';
 export type ApiKeyConfig = {
   /**
    * Master API key for both viewing modes. All non-set apiKeys will default to this one.
+   * @Optional Only necessary if either preview or release or both are not set.
    */
-  master: string;
+  master?: string;
 
   /**
    * The API key of the CaaS instance for preview viewing mode. Leave blank when providing a master key.
@@ -50,6 +51,13 @@ export type ProjectConfig = {
    * The ID of the CaaS project.
    */
   projectID: string;
+
+  /**
+   * Specify projects with referenced remote objects.<br>
+   * Instructions on configuring remotes can be found in the
+   * [documentation for the underlying Content API]((https://github.com/e-Spirit/javascript-content-api-library/blob/a70c41cd3492c818bdbd24c202c624718cf7a7bb/README.md#requirements)).
+   */
+  remotes?: RemoteProjectConfiguration | null;
 
   /**
    * The tenant ID of the CaaS project.
