@@ -1,4 +1,4 @@
-import { Request } from 'express';
+import { IncomingMessage } from 'http';
 import { EcomConfig } from './config';
 
 /**
@@ -15,8 +15,8 @@ export namespace DefaultPreviewDecider {
    *
    * @param req Access request data directly from the requesting browser.
    */
-  export const isPreview = async (req: Request<any, any, any>): Promise<boolean> => {
-    const clientOrigin = extractOrigin(req.header('x-referrer'));
+  export const isPreview = async (req: IncomingMessage): Promise<boolean> => {
+    const clientOrigin = extractOrigin(req.headers['x-referrer']);
     const previewOrigin = extractOrigin(EcomConfig.getCoreConfig().fsServerOrigin);
 
     if (!clientOrigin || !previewOrigin) return false;
@@ -76,11 +76,11 @@ export namespace PreviewDecider {
    * @internal
    * @param params dynamic params for custom previewDecider implementation.
    *               Uses the first argument for the default PreviewDecider,
-   *               assuming it as an express request object.
+   *               assuming it as an ClientRequest object.
    */
   export const isPreview = async (...params: any): Promise<boolean> => {
     if (customPreviewDecider?.isPreview) return customPreviewDecider?.isPreview(...params);
-    else return DefaultPreviewDecider.isPreview(params[0] as Request<any, any, any>);
+    else return DefaultPreviewDecider.isPreview(params[0] as IncomingMessage);
   };
 }
 

@@ -14,6 +14,43 @@ import {
 } from './configValidation.data';
 
 /**
+ * Schema to validate the documentation configuration.
+ *
+ * @internal
+ */
+const docsSchema = joi.object({
+  enabled: joi.boolean().default(false).label('Enable Documentation').description('Whether to serve Swagger UI'),
+  basePath: joi.string().label('Documentation Base Path').description('Path on which the Swagger UI should be served'),
+});
+
+/**
+ * Schema to validate the SSL server configuration.
+ *
+ * @internal
+ */
+const sslSchema = joi.object({
+  enabled: joi.boolean().default(false).label('SSL Enabled').description('Specifies if the server should use SSL encrypted connection.'),
+  key: joi
+    .alternatives()
+    .conditional('enabled', {
+      is: true,
+      then: joi.string().required(),
+      otherwise: joi.any(),
+    })
+    .label('SSL Key')
+    .description('Path to SSL Key.'),
+  cert: joi
+    .alternatives()
+    .conditional('enabled', {
+      is: true,
+      then: joi.string().required(),
+      otherwise: joi.any(),
+    })
+    .label('SSL Certificate')
+    .description('Path to SSL Certificate.'),
+});
+
+/**
  * Schema to validate the server configuration.
  *
  * @internal
@@ -22,6 +59,8 @@ export const serverSchema = joi
   .object({
     port: joi.number().port().default(3001).label('Server Port').description('The port on which this backend service is started.'),
     basePath: joi.string().uri({ relativeOnly: true }).default('/api').label('Base Path').description('The path on which this backend service is served.'),
+    docs: docsSchema.label('Swagger UI Documentation'),
+    ssl: sslSchema.label('SSL Config'),
   })
   .label('Server Config');
 
@@ -140,7 +179,7 @@ export const coreSchema = joi
 export const configSchema = joi.object({
   server: serverSchema.required(),
   core: coreSchema.required(),
-});
+}).options({ allowUnknown: true });
 
 const logConfigProblems = ({ message, path, type }: ValidationErrorItem) => getLogger('Validate Config').error(path.join('.'), message);
 

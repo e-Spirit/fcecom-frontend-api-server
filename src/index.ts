@@ -1,13 +1,13 @@
-export { getEcomEndpoints } from './core/integrations/express/express';
 export { initCoreConfig } from './core/utils/init';
 export * from './core/utils/config.meta';
 export { LogLevel } from './core/utils/logging/Logger';
 export { PreviewDecider, DefaultPreviewDecider, PreviewDeciderTemplate } from './core/utils/previewDecider';
 export { DataTransformer, Transformer, TransformerParameters } from './extendibles/dataTransformer';
 export { EcomConfig } from './core/utils/config';
-export { FetchResponseItem } from './core/api/EcomRemoteApi.meta';
+export { FetchResponseItem, FindPageParams, FindElementParams, FetchNavigationParams } from './core/api/EcomRemoteApi.meta';
 export { Page, NavigationData } from 'fsxa-api';
 export { APIProvider } from './core/utils/APIProvider';
 export { EcomRemoteApi } from './core/api/EcomRemoteApi';
 export * from './core/utils/errors';
-export { FindPageParams, FindElementParams, FetchNavigationParams } from './core/integrations/express/handlers';
+export { getEcomEndpoints } from './core/integrations/express/express';
+export { apiDefinition } from './core/api/EcomRemoteApi';

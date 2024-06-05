@@ -1,4 +1,4 @@
-import { generateRequestMock } from '../integrations/express/testUtils';
+import { generateRequestMock } from '../testUtils';
 import { getApi } from './apiSelector';
 
 const FS_SERVER_ORIGIN = 'http://url';
@@ -28,7 +28,7 @@ let isPreview = false;
 jest.mock('./previewDecider', () => {
   return {
     PreviewDecider: {
-      isPreview: (req: any) => req.header('x-referrer') === FS_SERVER_ORIGIN,
+      isPreview: (req: any) => req.headers['x-referrer'] === FS_SERVER_ORIGIN,
     },
   };
 });
@@ -38,7 +38,7 @@ describe('apiSelector', () => {
     it('returns preview API when referrer matches', async () => {
       // Arrange
       const reqMoq = generateRequestMock();
-      reqMoq.header = ((headerName: string) => (headerName === 'x-referrer' ? FS_SERVER_ORIGIN : '')) as any;
+      reqMoq.headers = { 'x-referrer': FS_SERVER_ORIGIN };
       // Act
       const result = getApi(reqMoq);
       // Assert
@@ -47,7 +47,7 @@ describe('apiSelector', () => {
     it('returns release API when referrer does not match', async () => {
       // Arrange
       const reqMoq = generateRequestMock();
-      reqMoq.header = ((headerName: string) => (headerName === 'x-referrer' ? 'http://someotherurl' : '')) as any;
+      reqMoq.headers = { 'x-referrer': 'http://someotherurl' };
       // Act
       const result = getApi(reqMoq);
       // Assert
@@ -56,7 +56,7 @@ describe('apiSelector', () => {
     it('returns release API as fallback', async () => {
       // Arrange
       const reqMoq = generateRequestMock();
-      reqMoq.header = ((headerName: string) => (headerName === 'x-referrer' ? '---TOTALY INVALID URL' : '')) as any;
+      reqMoq.headers = { 'x-referrer': '---TOTALY INVALID URL' };
       // Act
       const result = getApi(reqMoq);
       // Assert

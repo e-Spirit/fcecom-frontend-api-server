@@ -1,3 +1,9 @@
+## [1.0.1](https://github.com/e-Spirit/fcecom-frontend-api-server/compare/v1.0.0...v1.0.1) (2024-06-05)
+
+### Changes
+* Added Open API specification to the server.
+* Removed express as a dependency for the APIs core.
+
 ## [1.0.0](https://github.com/e-Spirit/fcecom-frontend-api-server/compare/v0.25.0...v1.0.0) (2024-05-17)
 
 ### Changes

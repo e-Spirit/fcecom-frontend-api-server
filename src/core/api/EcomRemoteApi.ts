@@ -10,12 +10,9 @@ import {
   Page,
   Section,
 } from 'fsxa-api';
-import { FetchNavigationParams } from '../integrations/express/handlers/fetchNavigation';
-import { FindPageParams } from '../integrations/express/handlers/findPage';
 import { InvalidLocaleError, ItemNotFoundError, MissingParameterError, UnauthorizedError, UnknownError } from '../utils/errors';
 import { EcomConfig } from '../utils/config';
-import { FindElementParams } from '../integrations/express/handlers/findElement';
-import { FetchResponseItem } from './EcomRemoteApi.meta';
+import { FetchNavigationParams, FetchResponseItem, FindElementParams, FindPageParams } from './EcomRemoteApi.meta';
 import { getLogger } from '../utils/logging/getLogger';
 import { filterEmptySections } from '../utils/sectionFilter';
 import { DataTransformer, Transformer } from '../../extendibles/dataTransformer';
@@ -175,3 +172,10 @@ export class EcomRemoteApi {
     return true;
   }
 }
+
+/**
+ * Provides API definition as JavaScript object.
+ * This is using the existing `openapi.yaml` file.
+ */
+// @ts-ignore YAML will be loaded with rollup plugin
+export { default as apiDefinition } from '../../../openapi.yaml';

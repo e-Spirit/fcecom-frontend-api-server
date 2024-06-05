@@ -3,24 +3,7 @@ import { getLogger } from '../../../utils/logging/getLogger';
 import { getApi } from '../../../utils/apiSelector';
 import { extractParamsFromRequest } from '../helper';
 import { InvalidLocaleError, ItemNotFoundError, MissingDefaultLocaleError, MissingParameterError, UnauthorizedError } from '../../../utils/errors';
-
-/**
- * Parameters to fetch the navigation.
- *
- * @export
- * @interface FetchNavigationParams
- */
-export type FetchNavigationParams = {
-  /**
-   * Locale to get the navigation in.
-   * If omitted, a default locale has to be provided.
-   */
-  locale?: string;
-  /**
-   * Initial path to fetch from.
-   */
-  initialPath?: string;
-};
+import { FetchNavigationParams } from '../../../api/EcomRemoteApi.meta';
 
 /**
  * Handler to use for the fetchNavigation route.

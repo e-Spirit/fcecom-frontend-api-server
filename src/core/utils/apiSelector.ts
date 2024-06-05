@@ -1,7 +1,7 @@
-import { Request } from 'express';
 import { EcomRemoteApi } from '../api/EcomRemoteApi';
 import { APIProvider } from './APIProvider';
 import { PreviewDecider } from './previewDecider';
+import { IncomingMessage } from 'http';
 
 /**
  * Returns the API instance that matches the given request, preview or release.
@@ -11,5 +11,5 @@ import { PreviewDecider } from './previewDecider';
  * @return {*} The API instance for the given request.
  * @internal
  */
-export const getApi = async (req: Request<any, any, any>): Promise<EcomRemoteApi> =>
+export const getApi = async (req: IncomingMessage): Promise<EcomRemoteApi> =>
   (await PreviewDecider.isPreview(req)) ? APIProvider.getPreviewApi() : APIProvider.getReleaseApi();

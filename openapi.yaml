@@ -1,0 +1,247 @@
+openapi: 3.1.0
+info:
+  title: Connect for Commerce Frontend API Server
+  description: This schema has to be implemented by any server functioning as the backend of the Frontend API in order for the client module to use it.
+  version: 1.0.0
+paths:
+  /findPage:
+    get:
+      operationId: findPage
+      summary: Finds a page based on the given parameters.
+      parameters:
+        - name: id
+          description: ID of the page as defined in the mapping.
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: type
+          description: Type of the page; either 'product', 'category' or 'content'.
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: locale
+          description: Locale of the desired response.
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: X-Referrer
+          description: Provide url about the iframe parent
+          in: header
+          required: false
+          schema:
+            type: string
+            format: url
+      responses:
+        '200':
+          summary: Success
+          description: Response containing information about the requested page.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  previewId:
+                    type: string
+                    example: befda52e-240a-4961-b167-80ea7bab00a8
+                  children:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                          example: sup_content
+                        previewId:
+                          type: string
+                          example: 57eaaa37-cdec-4c1a-8867-d3b860cec996
+                        children:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              id:
+                                type: string
+                                example: 76d255f3-e65f-42ee-96b6-42ea00677b5e
+                              previewId:
+                                type: string
+                                example: 792e9ece-b3cf-49b0-ba96-b8c03a2d4acb
+                              type:
+                                type: string
+                                example: type
+                              sectionType:
+                                type: string
+                                example: section_type
+                              data:
+                                type: object
+                              children:
+                                type: array
+                              displayed:
+                                type: boolean
+                                example: true
+        default:
+          description: ''
+          summary: Default
+  /findElement:
+    get:
+      operationId: findElement
+      summary: Finds an element based on the given parameters.
+      parameters:
+        - name: fsPageId
+          description: ID of the FirstSpirit page.
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: locale
+          description: Locale of the desired response.
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: X-Referrer
+          description: Provide url about the iframe parent
+          in: header
+          required: false
+          schema:
+            type: string
+            format: url
+      responses:
+        '200':
+          summary: Success
+          description: Response containing information about the requested element.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  previewId:
+                    type: string
+                    example: befda52e-240a-4961-b167-80ea7bab00a8
+                  children:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                          example: sup_content
+                        previewId:
+                          type: string
+                          example: 57eaaa37-cdec-4c1a-8867-d3b860cec996
+                        children:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              id:
+                                type: string
+                                example: 76d255f3-e65f-42ee-96b6-42ea00677b5e
+                              previewId:
+                                type: string
+                                example: 792e9ece-b3cf-49b0-ba96-b8c03a2d4acb
+                              type:
+                                type: string
+                                example: type
+                              sectionType:
+                                type: string
+                                example: section_type
+                              data:
+                                type: object
+                              children:
+                                type: array
+                              displayed:
+                                type: boolean
+                                example: true
+        default:
+          description: ''
+          summary: Default
+  /fetchNavigation:
+    get:
+      operationId: fetchNavigation
+      summary: Fetches the navigation based on the given parameters.
+      parameters:
+        - name: initialPath
+          description: Sub-path to search below.
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: locale
+          description: Locale of the desired response.
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: X-Referrer
+          description: Provide url about the iframe parent
+          in: header
+          required: false
+          schema:
+            type: string
+            format: url
+      responses:
+        '200':
+          summary: Success
+          description: The requested navigation information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  idMap:
+                    type: object
+                  seoRouteMap:
+                    type: object
+                  structure:
+                    type: array
+                  pages:
+                    type: object
+                  meta:
+                    type: object
+                    properties:
+                      identifier:
+                        type: object
+                        properties:
+                          tenantId:
+                            type: string
+                            example: 792e9ece-b3cf-49b0-ba96-b8c03a2d4acb
+                          navigationId:
+                            type: string
+                            example: 792e9ece-b3cf-49b0-ba96-b8c03a2d4acb
+                          languageId:
+                            type: string
+                            exampke: en_GB
+        default:
+          description: ''
+          summary: Default
+  /isPreview:
+    get:
+      operationId: isPreview
+      summary: Determines whether the requester is in preview mode.
+      parameters:
+        - name: X-Referrer
+          description: Provide url about the iframe parent
+          in: header
+          required: false
+          schema:
+            type: string
+            format: url
+      responses:
+        '200':
+          summary: Success
+          description: Information about whether the requester is in preview mode.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  isPreview:
+                    type: boolean
+                    example: true
+        default:
+          description: ''
+          summary: Default
+

@@ -1,10 +1,8 @@
 import { ComparisonQueryOperatorEnum, FSXAApiErrors, FSXARemoteApi, FSXARemoteApiConfig, LogicalQueryOperatorEnum } from 'fsxa-api';
 import { EcomRemoteApi } from './EcomRemoteApi';
-import { FetchNavigationParams } from '../integrations/express/handlers/fetchNavigation';
-import { FindPageParams } from '../integrations/express/handlers/findPage';
+import { FindElementParams, FetchNavigationParams, FindPageParams } from './EcomRemoteApi.meta';
 import { EcomConfig } from '../utils/config';
 import { getTestCoreConfig } from '../utils/config.spec.data';
-import { FindElementParams } from '../integrations/express/handlers/findElement';
 import { ItemNotFoundError, UnauthorizedError, UnknownError } from '../utils/errors';
 import { DataTransformer, Transformer } from '../../extendibles/dataTransformer';
 

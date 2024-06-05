@@ -3,28 +3,7 @@ import { getApi } from '../../../utils/apiSelector';
 import { getLogger } from '../../../utils/logging/getLogger';
 import { extractParamsFromRequest } from '../helper';
 import { InvalidLocaleError, ItemNotFoundError, MissingDefaultLocaleError, MissingParameterError, UnauthorizedError } from '../../../utils/errors';
-
-/**
- * Parameters used to find a page.
- *
- * @export
- * @interface FindPageParams
- */
-export type FindPageParams = {
-  /**
-   * ID of the page.
-   */
-  id: string;
-  /**
-   * Locale to get the page in.
-   * If omitted, a default locale has to be provided.
-   */
-  locale?: string;
-  /**
-   * Type of the page.
-   */
-  type: string;
-};
+import { FindPageParams } from '../../../api/EcomRemoteApi.meta';
 
 /**
  * Handler to use for the findPage route.

@@ -3,24 +3,7 @@ import { getApi } from '../../../utils/apiSelector';
 import { getLogger } from '../../../utils/logging/getLogger';
 import { extractParamsFromRequest } from '../helper';
 import { InvalidLocaleError, ItemNotFoundError, MissingDefaultLocaleError, MissingParameterError, UnauthorizedError } from '../../../utils/errors';
-
-/**
- * Parameters used to find an element.
- *
- * @export
- * @interface FindElementParams
- */
-export type FindElementParams = {
-  /**
-   * ID of the element.
-   */
-  fsPageId: string;
-  /**
-   * Locale to get the page in.
-   * If omitted, a default locale has to be provided.
-   */
-  locale?: string;
-};
+import { FindElementParams } from '../../../api/EcomRemoteApi.meta';
 
 /**
  * Handler to use for the findElement route.

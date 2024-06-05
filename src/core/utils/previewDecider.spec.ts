@@ -1,4 +1,4 @@
-import { generateRequestMock } from '../integrations/express/testUtils';
+import { generateRequestMock } from '../testUtils';
 import { DefaultPreviewDecider, PreviewDecider, PreviewDeciderTemplate } from './previewDecider';
 
 const FS_SERVER_ORIGIN = 'http://url';
@@ -22,7 +22,7 @@ describe('previewDecider', () => {
       it('returns true if x-referrer matches', async () => {
         // Arrange
         const reqMoq = generateRequestMock();
-        reqMoq.header = ((headerName: string) => (headerName === 'x-referrer' ? FS_SERVER_ORIGIN : '')) as any;
+        reqMoq.headers = { 'x-referrer': FS_SERVER_ORIGIN };
         // Act
         const result = await DefaultPreviewDecider.isPreview(reqMoq);
         // Assert
@@ -31,7 +31,7 @@ describe('previewDecider', () => {
       it('returns false when referrer does not match', async () => {
         // Arrange
         const reqMoq = generateRequestMock();
-        reqMoq.header = ((headerName: string) => (headerName === 'x-referrer' ? 'http://someotherurl' : '')) as any;
+        reqMoq.headers = { 'x-referrer': 'http://someotherurl' };
         // Act
         const result = await DefaultPreviewDecider.isPreview(reqMoq);
         // Assert
@@ -40,7 +40,7 @@ describe('previewDecider', () => {
       it('returns false as fallback', async () => {
         // Arrange
         const reqMoq = generateRequestMock();
-        reqMoq.header = ((headerName: string) => (headerName === 'x-referrer' ? '---TOTALY INVALID URL' : '')) as any;
+        reqMoq.headers = { 'x-referrer': '---TOTALY INVALID URL' };
         // Act
         const result = await DefaultPreviewDecider.isPreview(reqMoq);
         // Assert
