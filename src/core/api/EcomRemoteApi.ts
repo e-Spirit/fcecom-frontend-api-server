@@ -1,6 +1,7 @@
 import {
   ComparisonQueryOperatorEnum,
   Dataset,
+  FetchProjectPropertiesParams,
   FSXAApiErrors,
   FSXARemoteApi,
   GCAPage,
@@ -8,9 +9,16 @@ import {
   LogicalQueryOperatorEnum,
   NavigationData,
   Page,
+  ProjectProperties,
   Section,
 } from 'fsxa-api';
-import { InvalidLocaleError, ItemNotFoundError, MissingParameterError, UnauthorizedError, UnknownError } from '../utils/errors';
+import {
+  InvalidLocaleError,
+  ItemNotFoundError,
+  MissingParameterError,
+  UnauthorizedError,
+  UnknownError,
+} from '../utils/errors';
 import { EcomConfig } from '../utils/config';
 import { FetchNavigationParams, FetchResponseItem, FindElementParams, FindPageParams } from './EcomRemoteApi.meta';
 import { getLogger } from '../utils/logging/getLogger';
@@ -70,7 +78,7 @@ export class EcomRemoteApi {
         ).items?.[0] as FetchResponseItem) ?? null;
 
       if (page && EcomConfig.isUntranslatedSectionFilterActive()) {
-        page.children = page.children.map((slot) => {
+        page.children = page.children.map((slot: any) => {
           slot.children = filterEmptySections(slot.children as Section[]);
           return slot;
         });
@@ -116,6 +124,34 @@ export class EcomRemoteApi {
         }
       }
       throw new UnknownError('Failed to fetch navigation');
+    }
+  }
+
+  /**
+   * Fetches the project properties from CaaS.
+   *
+   * @param params Parameters to use to fetch project properties.
+   * @return {*} The project properties returned by the CaaS.
+   */
+  async fetchProjectProperties(params: FetchProjectPropertiesParams): Promise<ProjectProperties | null> {
+    const { locale = EcomConfig.getDefaultLocale() } = params;
+    this.validateLocale(locale);
+    try {
+      const projectProperties = await this.fsxaRemoteApi.fetchProjectProperties({
+        locale,
+      });
+
+      return DataTransformer.applyTransformer(Transformer.FETCH_PROJECT_PROPERTIES, projectProperties);
+    } catch (err: unknown) {
+      getLogger('EcomRemoteApi').error('Error during fetchProjectProperties', err);
+      if (err instanceof Error) {
+        if (err.message === FSXAApiErrors.NOT_FOUND) {
+          throw new ItemNotFoundError('Failed to fetch project properties - not found');
+        } else if (err.message === FSXAApiErrors.NOT_AUTHORIZED) {
+          throw new UnauthorizedError('Failed to fetch project properties - unauthorized');
+        }
+      }
+      throw new UnknownError('Failed to fetch project properties');
     }
   }
 

@@ -9,6 +9,8 @@ import {
   isPreview,
   FIND_ELEMENT_ROUTE,
   findElement,
+  FETCH_PROJECT_PROPERTIES_ROUTE,
+  fetchProjectProperties
 } from './handlers';
 import { CoreConfig } from '../../utils/config.meta';
 import { initCoreConfig } from '../../utils/init';
@@ -37,6 +39,7 @@ export const getEcomEndpoints = (config: CoreConfig) => {
   router.get(FETCH_NAVIGATION_ROUTE, fetchNavigation);
   router.get(FIND_ELEMENT_ROUTE, findElement);
   router.get(IS_PREVIEW_ROUTE, isPreview);
+  router.get(FETCH_PROJECT_PROPERTIES_ROUTE, fetchProjectProperties);
 
   router.all('*', fallbackHandler);
 

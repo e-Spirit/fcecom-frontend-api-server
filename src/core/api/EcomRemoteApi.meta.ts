@@ -3,6 +3,19 @@ import { Page } from 'fsxa-api';
 export type FetchResponseItem = Page;
 
 /**
+ * Parameters used to fetch project properties.
+ *
+ * @export
+ * @interface FetchProjectPropertiesParams
+ */
+export type FetchProjectPropertiesParams = {
+  /**
+   * Value must be ISO conform, both 'en' and 'en_US' are valid
+   */
+  locale: string;
+}
+
+/**
  * Parameters used to find an element.
  *
  * @export

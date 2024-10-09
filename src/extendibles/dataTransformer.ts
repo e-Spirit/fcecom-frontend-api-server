@@ -1,11 +1,11 @@
 import { getLogger } from '../core/utils/logging/getLogger';
 import { set } from 'lodash';
 import { FetchResponseItem } from '../core/api/EcomRemoteApi.meta';
-import { Dataset, GCAPage, Image, NavigationData, Page } from 'fsxa-api';
+import { Dataset, GCAPage, Image, NavigationData, Page, ProjectProperties } from 'fsxa-api';
 
 /**
  * A DataTransformer is a namespace provided to transform the responses from
- * `findPage()`, `findElement()` and `fetchNavigation()`.
+ * `findPage()`, `findElement()`, `fetchNavigation()` and `fetchProjectProperties()`.
  */
 export namespace DataTransformer {
   const logger = getLogger('Data Transformation');
@@ -14,6 +14,7 @@ export namespace DataTransformer {
     findPage?: (page: TransformerParameters[Transformer.FIND_PAGE]) => Promise<any>;
     findElement?: (element: TransformerParameters[Transformer.FIND_ELEMENT]) => any;
     fetchNavigation?: (navigation: TransformerParameters[Transformer.FETCH_NAVIGATION]) => any;
+    fetchProjectProperties?: (projectProperties: TransformerParameters[Transformer.FETCH_PROJECT_PROPERTIES]) => any;
   } = {};
 
   /**
@@ -81,6 +82,8 @@ export namespace DataTransformer {
           return transformers.findElement?.(response as TransformerParameters['findElement']);
         case 'fetchNavigation':
           return transformers.fetchNavigation?.(response as TransformerParameters['fetchNavigation']);
+        case 'fetchProjectProperties':
+          return transformers.fetchProjectProperties?.(response as TransformerParameters['fetchProjectProperties']);
       }
     } catch (err: unknown) {
       logger.error(`Problem transforming response of ${transformer}`, err);
@@ -96,6 +99,7 @@ export enum Transformer {
   FIND_PAGE = 'findPage',
   FIND_ELEMENT = 'findElement',
   FETCH_NAVIGATION = 'fetchNavigation',
+  FETCH_PROJECT_PROPERTIES = 'fetchProjectProperties',
 }
 
 /**
@@ -105,4 +109,5 @@ export type TransformerParameters = {
   findPage: FetchResponseItem | null;
   findElement: Page | GCAPage | Dataset | Image | any | null;
   fetchNavigation: NavigationData | null;
+  fetchProjectProperties: ProjectProperties | unknown | null;
 };
