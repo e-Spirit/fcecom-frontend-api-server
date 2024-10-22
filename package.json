@@ -1,6 +1,6 @@
 {
   "name": "fcecom-frontend-api-server",
-  "version": "1.2.1",
+  "version": "1.3.0",
   "description": "FirstSpirit Connect for Commerce - Frontend API Server",
   "main": "dist/main.cjs",
   "module": "dist/main.esm",
