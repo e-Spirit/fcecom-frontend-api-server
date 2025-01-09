@@ -1,3 +1,8 @@
+## [1.3.2](https://github.com/e-Spirit/fcecom-frontend-api-server/compare/v1.3.1...v1.3.2) (2025-01-09)
+
+### Changes
+* Updated version number to be consistent with client package.
+
 ## [1.3.1](https://github.com/e-Spirit/fcecom-frontend-api-server/compare/v1.3.0...v1.3.1) (2024-12-20)
 
 ### Changes
