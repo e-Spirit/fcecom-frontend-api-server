@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { PreviewDecider } from '../../../utils/previewDecider';
+import { ShareViewDecider } from '../../../utils/shareViewDecider';
 
 /**
  * Handler to use for the ispreview route.
@@ -12,6 +13,7 @@ import { PreviewDecider } from '../../../utils/previewDecider';
 export const isPreview = async (req: Request, res: Response): Promise<Response> =>
   res.json({
     isPreview: await PreviewDecider.isPreview(req),
+    isShareSession: await ShareViewDecider.isShareSession(req)
   });
 
 /**

@@ -27,17 +27,32 @@ paths:
           required: false
           schema:
             type: string
-        - name: X-Referrer
+        - name: x-referrer
           description: Provide url about the iframe parent
           in: header
           required: false
           schema:
             type: string
             format: url
+        - name: ecom-share-token
+          description: Provide a token for ShareView
+          in: header
+          required: false
+          schema:
+            type: string
+            format: string
       responses:
         '200':
-          summary: Success
           description: Response containing information about the requested page.
+          headers:
+            Access-Control-Expose-Headers:
+              description: Header to expose the `shared-preview` header.
+              schema:
+                type: string
+            shared-preview:
+              description: Header indicating shared preview information.
+              schema:
+                type: string
           content:
             application/json:
               schema:
@@ -78,12 +93,13 @@ paths:
                                 type: object
                               children:
                                 type: array
+                                items:
+                                  type: object
                               displayed:
                                 type: boolean
                                 example: true
         default:
           description: ''
-          summary: Default
   /findElement:
     get:
       operationId: findElement
@@ -101,17 +117,32 @@ paths:
           required: false
           schema:
             type: string
-        - name: X-Referrer
+        - name: x-referrer
           description: Provide url about the iframe parent
           in: header
           required: false
           schema:
             type: string
             format: url
+        - name: token
+          description: Provide a token for ShareView
+          in: header
+          required: false
+          schema:
+            type: string
+            format: string
       responses:
         '200':
-          summary: Success
           description: Response containing information about the requested element.
+          headers:
+            Access-Control-Expose-Headers:
+              description: Header to expose the `shared-preview` header.
+              schema:
+                type: string
+            shared-preview:
+              description: Header indicating shared preview information.
+              schema:
+                type: string
           content:
             application/json:
               schema:
@@ -152,12 +183,13 @@ paths:
                                 type: object
                               children:
                                 type: array
+                                items:
+                                  type: object
                               displayed:
                                 type: boolean
                                 example: true
         default:
           description: ''
-          summary: Default
   /fetchNavigation:
     get:
       operationId: fetchNavigation
@@ -175,17 +207,32 @@ paths:
           required: false
           schema:
             type: string
-        - name: X-Referrer
+        - name: x-referrer
           description: Provide url about the iframe parent
           in: header
           required: false
           schema:
             type: string
             format: url
+        - name: token
+          description: Provide a token for ShareView
+          in: header
+          required: false
+          schema:
+            type: string
+            format: string
       responses:
         '200':
-          summary: Success
           description: The requested navigation information.
+          headers:
+            Access-Control-Expose-Headers:
+              description: Header to expose the `shared-preview` header.
+              schema:
+                type: string
+            shared-preview:
+              description: Header indicating shared preview information.
+              schema:
+                type: string
           content:
             application/json:
               schema:
@@ -197,6 +244,8 @@ paths:
                     type: object
                   structure:
                     type: array
+                    items:
+                      type: object
                   pages:
                     type: object
                   meta:
@@ -213,26 +262,40 @@ paths:
                             example: 792e9ece-b3cf-49b0-ba96-b8c03a2d4acb
                           languageId:
                             type: string
-                            exampke: en_GB
+                            example: en_GB
         default:
           description: ''
-          summary: Default
   /isPreview:
     get:
       operationId: isPreview
       summary: Determines whether the requester is in preview mode.
       parameters:
-        - name: X-Referrer
+        - name: x-referrer
           description: Provide url about the iframe parent
           in: header
           required: false
           schema:
             type: string
             format: url
+        - name: token
+          description: Provide a token for ShareView
+          in: header
+          required: false
+          schema:
+            type: string
+            format: string
       responses:
         '200':
-          summary: Success
           description: Information about whether the requester is in preview mode.
+          headers:
+            Access-Control-Expose-Headers:
+              description: Header to expose the `shared-preview` header.
+              schema:
+                type: string
+            shared-preview:
+              description: Header indicating shared preview information.
+              schema:
+                type: string
           content:
             application/json:
               schema:
@@ -241,7 +304,8 @@ paths:
                   isPreview:
                     type: boolean
                     example: true
+                  isShareSession:
+                    type: boolean
+                    example: false
         default:
           description: ''
-          summary: Default
-

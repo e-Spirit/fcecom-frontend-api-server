@@ -4,6 +4,7 @@ import { getApi } from '../../../utils/apiSelector';
 import { extractParamsFromRequest } from '../helper';
 import { InvalidLocaleError, ItemNotFoundError, MissingDefaultLocaleError, MissingParameterError, UnauthorizedError } from '../../../utils/errors';
 import { FetchProjectPropertiesParams } from '../../../api/EcomRemoteApi.meta';
+import { addShareViewInfo } from '../../../utils/addShareViewInfo';
 
 /**
  * Handler to use for the fetchProjectProperties route.
@@ -19,6 +20,7 @@ export const fetchProjectProperties = async (req: Request, res: Response): Promi
   logger.debug('GET request query', req.query);
 
   try {
+    await addShareViewInfo(req, res);
     return res.json(await (await getApi(req)).fetchProjectProperties(extractParamsFromRequest<FetchProjectPropertiesParams>(req)));
   } catch (err: unknown) {
     logger.error('Unable to fetch project properties', err);

@@ -52,7 +52,7 @@ describe('Logger', () => {
       });
       it(`does not log to the console if log level above ${test.method}`, () => {
         // Arrange
-        Logging.init(999);
+        Logging.init(999 as any);
         const logger = new Logger(test.method);
         const spy = jest.fn();
         global.console = { [test.consoleMethod]: spy } as any;

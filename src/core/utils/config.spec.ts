@@ -90,6 +90,9 @@ describe('config', () => {
               id: 'REMOTE_ID',
             },
           },
+          shareView: {
+            secret: 'i-am-a-secret',
+          },
           caasURL: 'CAASURL',
           navigationServiceURL: 'NAVIGATIONSERVICEURL',
           projectID: 'PROJECTID',

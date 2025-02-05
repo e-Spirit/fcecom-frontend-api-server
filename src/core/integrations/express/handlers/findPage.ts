@@ -4,6 +4,7 @@ import { getLogger } from '../../../utils/logging/getLogger';
 import { extractParamsFromRequest } from '../helper';
 import { InvalidLocaleError, ItemNotFoundError, MissingDefaultLocaleError, MissingParameterError, UnauthorizedError } from '../../../utils/errors';
 import { FindPageParams } from '../../../api/EcomRemoteApi.meta';
+import { addShareViewInfo } from '../../../utils/addShareViewInfo';
 
 /**
  * Handler to use for the findPage route.
@@ -19,6 +20,7 @@ export const findPage = async (req: Request<any, any>, res: Response): Promise<R
   logger.debug('GET request query', req.query);
 
   try {
+    await addShareViewInfo(req, res);
     return res.json(await (await getApi(req)).findPage(extractParamsFromRequest<FindPageParams>(req)));
   } catch (err: unknown) {
     logger.error('Unable to find page', err);

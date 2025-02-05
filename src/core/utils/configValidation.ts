@@ -169,17 +169,19 @@ export const coreSchema = joi
     project: projectSchema.required(),
   })
   .label('Core Config')
-  .options({ allowUnknown: true });
+  .options({ allowUnknown: true, errors: { label: 'key' } });
 
 /**
  * Schema to validate the configuration.
  *
  * @internal
  */
-export const configSchema = joi.object({
-  server: serverSchema.required(),
-  core: coreSchema.required(),
-}).options({ allowUnknown: true });
+export const configSchema = joi
+  .object({
+    server: serverSchema.required(),
+    core: coreSchema.required(),
+  })
+  .options({ allowUnknown: true });
 
 const logConfigProblems = ({ message, path, type }: ValidationErrorItem) => getLogger('Validate Config').error(path.join('.'), message);
 

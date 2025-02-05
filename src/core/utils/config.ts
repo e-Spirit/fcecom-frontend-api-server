@@ -83,7 +83,7 @@ export namespace EcomConfig {
    *
    * @internal
    * @returns The currently configured default locale.
-   * @Trows MissingDefaultLocaleError If no default locale is configured.
+   * @Throws MissingDefaultLocaleError If no default locale is configured.
    */
   export const getDefaultLocale = () => {
     const { defaultLocale } = getCoreConfig();

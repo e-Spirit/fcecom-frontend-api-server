@@ -113,7 +113,7 @@ describe('findPage', () => {
     expect(loggerMock.error).toHaveBeenCalledWith('Unable to find page', error);
     expect(resMock.status).toHaveBeenCalledWith(401);
   });
-  it('handles not any other error from API', async () => {
+  it('handles any other error from API', async () => {
     // Arrange
     const resMock = generateResponseMock();
     const reqMock = generateRequestMock();

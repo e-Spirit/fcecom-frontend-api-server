@@ -56,7 +56,7 @@ describe('apiSelector', () => {
     it('returns release API as fallback', async () => {
       // Arrange
       const reqMoq = generateRequestMock();
-      reqMoq.headers = { 'x-referrer': '---TOTALY INVALID URL' };
+      reqMoq.headers = { 'x-referrer': '---TOTALLY INVALID URL' };
       // Act
       const result = getApi(reqMoq);
       // Assert

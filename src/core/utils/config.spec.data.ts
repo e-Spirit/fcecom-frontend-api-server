@@ -18,12 +18,15 @@ const coreConfig = {
     remotes: {
       media: {
         locale: defaultLocale,
-        id: '39fc8ac9-e4ec-4eab-b541-aea7d8dd2718'
+        id: '39fc8ac9-e4ec-4eab-b541-aea7d8dd2718',
       },
       additionalMedia: {
         locale: defaultLocale,
         id: '718efd80-fa21-4e7a-b735-0da91fbc73dc',
-      }
+      },
+    },
+    shareView: {
+      secret: 'i-am-a-secret',
     },
     caasURL: 'https://example.org/CaaS',
     navigationServiceURL: 'https://example.org/NavigationService',

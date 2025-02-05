@@ -4,6 +4,7 @@ import { getLogger } from '../../../utils/logging/getLogger';
 import { extractParamsFromRequest } from '../helper';
 import { InvalidLocaleError, ItemNotFoundError, MissingDefaultLocaleError, MissingParameterError, UnauthorizedError } from '../../../utils/errors';
 import { FindElementParams } from '../../../api/EcomRemoteApi.meta';
+import { addShareViewInfo } from '../../../utils/addShareViewInfo';
 
 /**
  * Handler to use for the findElement route.
@@ -19,6 +20,7 @@ export const findElement = async (req: Request<any, any>, res: Response): Promis
   logger.debug('GET request query', req.query);
 
   try {
+    await addShareViewInfo(req, res);
     return res.json(await (await getApi(req)).findElement(extractParamsFromRequest<FindElementParams>(req)));
   } catch (err: unknown) {
     logger.error('Unable to find element', err);

@@ -1,6 +1,6 @@
 import { ComparisonQueryOperatorEnum, FSXAApiErrors, FSXARemoteApi, FSXARemoteApiConfig, LogicalQueryOperatorEnum } from 'fsxa-api';
 import { EcomRemoteApi } from './EcomRemoteApi';
-import { FindElementParams, FetchNavigationParams, FindPageParams } from './EcomRemoteApi.meta';
+import { FetchNavigationParams, FetchProjectPropertiesParams, FindElementParams, FindPageParams } from './EcomRemoteApi.meta';
 import { EcomConfig } from '../utils/config';
 import { getTestCoreConfig } from '../utils/config.spec.data';
 import { ItemNotFoundError, UnauthorizedError, UnknownError } from '../utils/errors';
@@ -248,7 +248,7 @@ describe('EcomRemoteApi', () => {
         expect(err.message).toEqual('Failed to find page - unauthorized');
       }
     });
-    it('throws an error if FSXA throws unkown error', async () => {
+    it('throws an error if FSXA throws unknown error', async () => {
       expect.assertions(3);
       // Arrange
       const fsxaRemoteApi = new FSXARemoteApi(getFsxaConfig());
@@ -425,7 +425,7 @@ describe('EcomRemoteApi', () => {
         expect(err.message).toEqual('Failed to fetch navigation - unauthorized');
       }
     });
-    it('throws an error if FSXA throws unkown error', async () => {
+    it('throws an error if FSXA throws unknown error', async () => {
       expect.assertions(3);
       // Arrange
       const fsxaRemoteApi = new FSXARemoteApi(getFsxaConfig());
@@ -445,6 +445,152 @@ describe('EcomRemoteApi', () => {
         expect(spy).toHaveBeenCalled();
         expect(err).toBeInstanceOf(UnknownError);
         expect(err.message).toEqual('Failed to fetch navigation');
+      }
+    });
+  });
+
+  describe('fetchProjectProperties()', () => {
+    it('throws an error if parameter "locale" is missing and no fallback is configured', async () => {
+      // Arrange
+      const coreConfig = getTestCoreConfig();
+      const fsxaRemoteApi = new FSXARemoteApi(getFsxaConfig());
+      const fetchProjectPropertiesResult = {};
+      const spy = (fsxaRemoteApi.fetchProjectProperties = jest.fn().mockResolvedValue(fetchProjectPropertiesResult));
+      const api = new EcomRemoteApi(fsxaRemoteApi);
+
+      EcomConfig.applyConfig({ ...coreConfig, defaultLocale: undefined });
+
+      const params = {
+        locale: undefined,
+      } as any as FetchProjectPropertiesParams;
+      // Act
+      await expect(async () => {
+        return api.fetchProjectProperties(params);
+      }).rejects.toThrow('locale is undefined and no fallback is available');
+      expect(spy).not.toHaveBeenCalled();
+    });
+    it('proceeds if parameter "locale" is missing but a fallback is configured', async () => {
+      // Arrange
+      const coreConfig = getTestCoreConfig();
+      const fsxaRemoteApi = new FSXARemoteApi(getFsxaConfig());
+      const fetchProjectPropertiesResult = {};
+      const spy = (fsxaRemoteApi.fetchProjectProperties = jest.fn().mockResolvedValue(fetchProjectPropertiesResult));
+      const api = new EcomRemoteApi(fsxaRemoteApi);
+
+      EcomConfig.applyConfig(coreConfig);
+
+      const params = {
+        locale: undefined,
+      } as any as FetchProjectPropertiesParams;
+
+      // Act
+      await api.fetchProjectProperties(params);
+
+      // Assert
+      expect(EcomConfig.getCoreConfig().defaultLocale).toBe('de_DE');
+      expect(spy).toHaveBeenCalled();
+    });
+    it('uses FSXA API instance to fetch the projectProperties', async () => {
+      // Arrange
+      const fsxaRemoteApi = new FSXARemoteApi(getFsxaConfig());
+      const fetchProjectPropertiesResult = {};
+      const spy = (fsxaRemoteApi.fetchProjectProperties = jest.fn().mockResolvedValue(fetchProjectPropertiesResult));
+      const api = new EcomRemoteApi(fsxaRemoteApi);
+
+      // Act
+      const params = {
+        locale: 'de_DE',
+      } as FetchProjectPropertiesParams;
+      const result = await api.fetchProjectProperties(params);
+
+      // Assert
+      expect(result).toBe(fetchProjectPropertiesResult);
+      expect(spy).toHaveBeenNthCalledWith(
+        1,
+        expect.objectContaining({
+          locale: params.locale,
+        })
+      );
+    });
+    it('applies data transformation', async () => {
+      // Arrange
+      const fsxaRemoteApi = new FSXARemoteApi(getFsxaConfig());
+      const fetchProjectPropertiesResult = {};
+      const spy = (fsxaRemoteApi.fetchProjectProperties = jest.fn().mockResolvedValue(fetchProjectPropertiesResult));
+      const api = new EcomRemoteApi(fsxaRemoteApi);
+
+      // Act
+      const params = {
+        locale: 'de_DE',
+      } as FetchProjectPropertiesParams;
+      const result = await api.fetchProjectProperties(params);
+
+      // Assert
+      expect(result).toEqual(fetchProjectPropertiesResult);
+      expect(spy).toHaveBeenCalled();
+      expect(DataTransformer.applyTransformer).toHaveBeenCalledWith(Transformer.FETCH_PROJECT_PROPERTIES, fetchProjectPropertiesResult);
+    });
+    it('throws an error if FSXA throws 404', async () => {
+      expect.assertions(3);
+      // Arrange
+      const fsxaRemoteApi = new FSXARemoteApi(getFsxaConfig());
+      const error = new Error(FSXAApiErrors.NOT_FOUND);
+      const spy = (fsxaRemoteApi.fetchProjectProperties = jest.fn().mockRejectedValue(error));
+      const api = new EcomRemoteApi(fsxaRemoteApi);
+
+      const params = {
+        locale: 'de_DE',
+      } as FetchProjectPropertiesParams;
+      // Act
+      try {
+        await api.fetchProjectProperties(params);
+      } catch (err: any) {
+        // Assert
+        expect(spy).toHaveBeenCalled();
+        expect(err).toBeInstanceOf(ItemNotFoundError);
+        expect(err.message).toEqual('Failed to fetch project properties - not found');
+      }
+    });
+    it('throws an error if FSXA throws 401', async () => {
+      expect.assertions(3);
+      // Arrange
+      const fsxaRemoteApi = new FSXARemoteApi(getFsxaConfig());
+      const error = new Error(FSXAApiErrors.NOT_AUTHORIZED);
+      const spy = (fsxaRemoteApi.fetchProjectProperties = jest.fn().mockRejectedValue(error));
+      const api = new EcomRemoteApi(fsxaRemoteApi);
+
+      const params = {
+        locale: 'de_DE',
+      } as FetchProjectPropertiesParams;
+      // Act
+      try {
+        await api.fetchProjectProperties(params);
+      } catch (err: any) {
+        // Assert
+        expect(spy).toHaveBeenCalled();
+        expect(err).toBeInstanceOf(UnauthorizedError);
+        expect(err.message).toEqual('Failed to fetch project properties - unauthorized');
+      }
+    });
+    it('throws an error if FSXA throws unknown error', async () => {
+      expect.assertions(3);
+      // Arrange
+      const fsxaRemoteApi = new FSXARemoteApi(getFsxaConfig());
+      const error = new Error('UNKNOWN ERROR');
+      const spy = (fsxaRemoteApi.fetchProjectProperties = jest.fn().mockRejectedValue(error));
+      const api = new EcomRemoteApi(fsxaRemoteApi);
+
+      const params = {
+        locale: 'de_DE',
+      } as FetchProjectPropertiesParams;
+      // Act
+      try {
+        await api.fetchProjectProperties(params);
+      } catch (err: any) {
+        // Assert
+        expect(spy).toHaveBeenCalled();
+        expect(err).toBeInstanceOf(UnknownError);
+        expect(err.message).toEqual('Failed to fetch project properties');
       }
     });
   });
@@ -599,7 +745,7 @@ describe('EcomRemoteApi', () => {
         expect(err.message).toEqual('Failed to find element - unauthorized');
       }
     });
-    it('throws an error if FSXA throws unkown error', async () => {
+    it('throws an error if FSXA throws unknown error', async () => {
       expect.assertions(3);
       // Arrange
       const fsxaRemoteApi = new FSXARemoteApi(getFsxaConfig());

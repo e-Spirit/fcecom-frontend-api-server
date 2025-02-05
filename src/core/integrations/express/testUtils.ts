@@ -16,6 +16,7 @@ export const generateResponseMock = () => {
   resMock.json = jest.fn().mockReturnValue(resMock);
   resMock.send = jest.fn().mockReturnValue(resMock);
   resMock.sendStatus = jest.fn().mockReturnValue(resMock);
+  resMock.appendHeader = jest.fn();
   return resMock as Response;
 };
 

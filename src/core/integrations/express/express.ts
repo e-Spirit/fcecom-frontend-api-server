@@ -2,15 +2,15 @@ import express from 'express';
 import {
   fallbackHandler,
   FETCH_NAVIGATION_ROUTE,
+  FETCH_PROJECT_PROPERTIES_ROUTE,
   fetchNavigation,
+  fetchProjectProperties,
+  FIND_ELEMENT_ROUTE,
   FIND_PAGE_ROUTE,
+  findElement,
   findPage,
   IS_PREVIEW_ROUTE,
   isPreview,
-  FIND_ELEMENT_ROUTE,
-  findElement,
-  FETCH_PROJECT_PROPERTIES_ROUTE,
-  fetchProjectProperties
 } from './handlers';
 import { CoreConfig } from '../../utils/config.meta';
 import { initCoreConfig } from '../../utils/init';

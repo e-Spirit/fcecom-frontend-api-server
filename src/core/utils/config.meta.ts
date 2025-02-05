@@ -68,10 +68,30 @@ export type ProjectConfig = {
    * Whether untranslated sections should be removed.
    */
   removeUntranslatedSections?: boolean;
+
+  /**
+   * Configure a JWT token secret
+   */
+  shareView: ShareViewConfig;
 };
 
 /**
- *Configuration for the core part of the configuration.
+ * Information about the ShareView mode.
+ * Contains the JWT secret needed to decrypt and verify a JWT token.
+ *
+ * @export
+ */
+export type ShareViewConfig = {
+
+  /**
+   * A secret to decrypt and verify a JWT token.
+   * It has to be synced with the Connect for Commerce module.
+   */
+  secret: string;
+};
+
+/**
+ * Configuration for the core part of the configuration.
  *
  * @export
  * @interface CoreConfig

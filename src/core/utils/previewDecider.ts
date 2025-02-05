@@ -5,7 +5,7 @@ import { EcomConfig } from './config';
  * Provide default logic to check if the current session is an iframe,
  * accessed through the FirstSpirit Content Creator.
  *
- * @module DefaultPreviewDecider
+ * @namespace DefaultPreviewDecider
  */
 export namespace DefaultPreviewDecider {
   /**
