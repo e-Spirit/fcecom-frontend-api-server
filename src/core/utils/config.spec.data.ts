@@ -32,6 +32,10 @@ const coreConfig = {
     navigationServiceURL: 'https://example.org/NavigationService',
     projectID: 'cd63ae7a-b481-40a5-865e-afc1d34f6a54',
     tenantID: 'tenant-id',
+    fields: {
+      id: 'custom_id',
+      type: 'custom_type'
+    }
   },
 } as CoreConfig;
 

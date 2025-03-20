@@ -120,6 +120,31 @@ export const remotesSchema = joi
   .label('Remotes Config');
 
 /**
+ * Schema to validate the custom fields configuration.
+ *
+ * @internal
+ */
+export const fieldsSchema = joi
+  .object({
+    id: joi
+      .string()
+      .allow(null)
+      .optional()
+      .default('id')
+      .label('ShopID')
+      .description('The ShopID, stored in a FirstSpirit page.'),
+    type: joi
+      .string()
+      .allow(null)
+      .optional()
+      .default('type')
+      .label('PageType')
+      .description('The type of page represented in the template, e.g. category / product / content'),
+  })
+  .allow(null)
+  .label('Fields Config');
+
+/**
  * Schema to validate the project configuration.
  *
  * @internal
@@ -139,6 +164,7 @@ export const projectSchema = joi
     tenantID: joi.string().required().label('Tenant ID').description('The tenant ID of the CaaS project.'),
     apiKey: apiKeySchema.required(),
     removeUntranslatedSections: joi.boolean(),
+    fields: fieldsSchema.optional(),
   })
   .label('Project Config');
 
@@ -201,7 +227,7 @@ export const validateCoreConfig = (config: CoreConfig): ValidationResult<any> =>
     errors: {
       stack: false,
       render: true,
-      label: false,
+      label: 'path',
       language: 'de',
     },
   });

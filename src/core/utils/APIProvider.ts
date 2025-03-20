@@ -14,8 +14,8 @@ export namespace APIProvider {
    * @internal
    */
   export const init = (fsxaConfig: FSXAConfig) => {
-    previewApi = new EcomRemoteApi(new FSXARemoteApi(fsxaConfig.preview));
-    releaseApi = new EcomRemoteApi(new FSXARemoteApi(fsxaConfig.release));
+    previewApi = new EcomRemoteApi(fsxaConfig.preview);
+    releaseApi = new EcomRemoteApi(fsxaConfig.release);
   };
 
   /**

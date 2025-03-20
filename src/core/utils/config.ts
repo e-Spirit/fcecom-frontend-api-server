@@ -65,9 +65,10 @@ export namespace EcomConfig {
       caasURL,
       navigationServiceURL,
       tenantID,
+      fields
     } = coreConfig.project;
 
-    const project = { projectID, caasURL, navigationServiceURL, tenantID };
+    const project = { projectID, caasURL, navigationServiceURL, tenantID, fields };
     const logLevel = coreConfig.logLevel;
 
     let remotes = undefined;
@@ -98,7 +99,6 @@ export namespace EcomConfig {
    */
   export const isUntranslatedSectionFilterActive = () => {
     const { removeUntranslatedSections } = coreConfig.project;
-
     return removeUntranslatedSections ?? false;
   };
 

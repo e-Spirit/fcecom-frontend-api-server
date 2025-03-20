@@ -70,6 +70,11 @@ export type ProjectConfig = {
   removeUntranslatedSections?: boolean;
 
   /**
+   * Customize several names of form fields.
+   */
+  fields: FieldsConfig;
+
+  /**
    * Configure a JWT token secret
    */
   shareView: ShareViewConfig;
@@ -116,6 +121,24 @@ export type CoreConfig = {
 };
 
 /**
+ * Customize several names of form fields.
+ *
+ * @export
+ * @interface CoreConfig
+ */
+export type FieldsConfig = {
+  /**
+   * The ShopID, stored in a FirstSpirit page.
+   */
+  id: string;
+
+  /**
+   * The type of page represented in the template, e.g. category / product / content
+   */
+  type: string;
+};
+
+/**
  * Configuration for the FSXA.
  *
  * @export
@@ -123,6 +146,6 @@ export type CoreConfig = {
  * @internal
  */
 export type FSXAConfig = {
-  preview: FSXARemoteApiConfig;
-  release: FSXARemoteApiConfig;
+  preview: FSXARemoteApiConfig & { fields: FieldsConfig };
+  release: FSXARemoteApiConfig & { fields: FieldsConfig };
 };

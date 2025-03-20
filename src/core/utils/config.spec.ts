@@ -97,6 +97,10 @@ describe('config', () => {
           navigationServiceURL: 'NAVIGATIONSERVICEURL',
           projectID: 'PROJECTID',
           tenantID: 'TENANTID',
+          fields: {
+            id: 'CUSTOM ID',
+            type: 'CUSTOM TYPE',
+          },
         },
       };
 
@@ -173,6 +177,7 @@ describe('config', () => {
         apikey: coreConfig.project.apiKey.preview,
         remotes: coreConfig.project.remotes,
         contentMode: 'preview',
+        fields: coreConfig.project.fields,
         logLevel: coreConfig.logLevel,
       });
       expect(result.release).toEqual({
@@ -183,6 +188,7 @@ describe('config', () => {
         apikey: coreConfig.project.apiKey.release,
         remotes: coreConfig.project.remotes,
         contentMode: 'release',
+        fields: coreConfig.project.fields,
         logLevel: coreConfig.logLevel,
       });
     });

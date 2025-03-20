@@ -4,6 +4,7 @@ import {
   FetchProjectPropertiesParams,
   FSXAApiErrors,
   FSXARemoteApi,
+  FSXARemoteApiConfig,
   GCAPage,
   Image,
   LogicalQueryOperatorEnum,
@@ -24,6 +25,7 @@ import { FetchNavigationParams, FetchResponseItem, FindElementParams, FindPagePa
 import { getLogger } from '../utils/logging/getLogger';
 import { filterEmptySections } from '../utils/sectionFilter';
 import { DataTransformer, Transformer } from '../../extendibles/dataTransformer';
+import { FieldsConfig } from '../utils/config.meta';
 
 /**
  * Server module of the Frontend API for Connect for Commerce.
@@ -34,10 +36,15 @@ import { DataTransformer, Transformer } from '../../extendibles/dataTransformer'
 export class EcomRemoteApi {
   public contentMode: 'release' | 'preview';
   private fsxaRemoteApi: FSXARemoteApi;
+  private readonly fieldsConfig: FieldsConfig;
 
-  public constructor(fsxaRemoteApi: FSXARemoteApi) {
-    this.fsxaRemoteApi = fsxaRemoteApi;
-    this.contentMode = fsxaRemoteApi.contentMode;
+  public constructor(fsxaConfig: FSXARemoteApiConfig & { fields: FieldsConfig }) {
+    this.fsxaRemoteApi = new FSXARemoteApi(fsxaConfig);
+    this.contentMode = fsxaConfig.contentMode;
+    this.fieldsConfig = {
+      id: fsxaConfig?.fields?.id || 'id',
+      type: fsxaConfig?.fields?.type || 'type',
+    };
   }
 
   /**
@@ -61,12 +68,12 @@ export class EcomRemoteApi {
                 operator: LogicalQueryOperatorEnum.AND,
                 filters: [
                   {
-                    field: 'page.formData.type.value',
+                    field: `page.formData.${this.fieldsConfig.type}.value`,
                     operator: ComparisonQueryOperatorEnum.EQUALS,
                     value: type,
                   },
                   {
-                    field: 'page.formData.id.value',
+                    field: `page.formData.${this.fieldsConfig.id}.value`,
                     operator: ComparisonQueryOperatorEnum.EQUALS,
                     value: id,
                   },
