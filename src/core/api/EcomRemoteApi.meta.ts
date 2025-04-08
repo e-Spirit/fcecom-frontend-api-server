@@ -2,6 +2,16 @@ import { Page } from 'fsxa-api';
 
 export type FetchResponseItem = Page;
 
+export type AvailableLocale = {
+  tenantId: string;
+  navigationId: string;
+  languageId: string;
+};
+
+export type GetAvailableLocalesResponse = {
+  _embedded: Array<AvailableLocale>;
+};
+
 /**
  * Parameters used to fetch project properties.
  *
@@ -13,7 +23,7 @@ export type FetchProjectPropertiesParams = {
    * Value must be ISO conform, both 'en' and 'en_US' are valid
    */
   locale: string;
-}
+};
 
 /**
  * Parameters used to find an element.

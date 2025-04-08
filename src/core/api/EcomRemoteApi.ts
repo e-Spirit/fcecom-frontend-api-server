@@ -13,15 +13,9 @@ import {
   ProjectProperties,
   Section,
 } from 'fsxa-api';
-import {
-  InvalidLocaleError,
-  ItemNotFoundError,
-  MissingParameterError,
-  UnauthorizedError,
-  UnknownError,
-} from '../utils/errors';
+import { InvalidLocaleError, ItemNotFoundError, MissingParameterError, UnauthorizedError, UnknownError } from '../utils/errors';
 import { EcomConfig } from '../utils/config';
-import { FetchNavigationParams, FetchResponseItem, FindElementParams, FindPageParams } from './EcomRemoteApi.meta';
+import { AvailableLocale, FetchNavigationParams, FetchResponseItem, FindElementParams, FindPageParams } from './EcomRemoteApi.meta';
 import { getLogger } from '../utils/logging/getLogger';
 import { filterEmptySections } from '../utils/sectionFilter';
 import { DataTransformer, Transformer } from '../../extendibles/dataTransformer';
@@ -36,10 +30,12 @@ import { FieldsConfig } from '../utils/config.meta';
 export class EcomRemoteApi {
   public contentMode: 'release' | 'preview';
   private fsxaRemoteApi: FSXARemoteApi;
+  private readonly fsxaConfig: FSXARemoteApiConfig;
   private readonly fieldsConfig: FieldsConfig;
 
   public constructor(fsxaConfig: FSXARemoteApiConfig & { fields: FieldsConfig }) {
     this.fsxaRemoteApi = new FSXARemoteApi(fsxaConfig);
+    this.fsxaConfig = fsxaConfig;
     this.contentMode = fsxaConfig.contentMode;
     this.fieldsConfig = {
       id: fsxaConfig?.fields?.id || 'id',
@@ -159,6 +155,41 @@ export class EcomRemoteApi {
         }
       }
       throw new UnknownError('Failed to fetch project properties');
+    }
+  }
+
+  /**
+   * Gets available locales.
+   *
+   * @return {*} Available locales.
+   */
+  async getAvailableLocales(): Promise<Array<string>> {
+    const { navigationServiceURL, projectID, apikey } = this.fsxaConfig;
+
+    try {
+      const headers = new Headers();
+      headers.append('Authorization', `Bearer ${apikey}`);
+
+      const queryParam = `${this.contentMode}.${projectID}`;
+      const url = `${navigationServiceURL}/?from=${queryParam}&until=${queryParam}`;
+      const data = await fetch(url, { method: 'GET', headers }).then((response) => response.json());
+
+      const items: Array<AvailableLocale> = data?._embedded;
+      const validItems = items?.filter(({ languageId }) => !!languageId);
+      const locales = validItems?.map(({ languageId }) => languageId);
+      const uniqueLocales = Array.from(new Set(locales));
+
+      return DataTransformer.applyTransformer(Transformer.GET_AVAILABLE_LOCALES, uniqueLocales);
+    } catch (err: unknown) {
+      getLogger('EcomRemoteApi').error('Error during getAvailableLocales', err);
+      if (err instanceof Error) {
+        if (err.message === FSXAApiErrors.NOT_FOUND) {
+          throw new ItemNotFoundError('Failed to get available locales - not found');
+        } else if (err.message === FSXAApiErrors.NOT_AUTHORIZED) {
+          throw new UnauthorizedError('Failed to get available locales - unauthorized');
+        }
+      }
+      throw new UnknownError('Failed to get available locales');
     }
   }
 

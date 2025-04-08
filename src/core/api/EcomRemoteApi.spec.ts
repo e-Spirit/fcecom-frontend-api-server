@@ -1,6 +1,6 @@
 import { ComparisonQueryOperatorEnum, FSXAApiErrors, FSXARemoteApi, FSXARemoteApiConfig, LogicalQueryOperatorEnum } from 'fsxa-api';
 import { EcomRemoteApi } from './EcomRemoteApi';
-import { FetchNavigationParams, FetchProjectPropertiesParams, FindElementParams, FindPageParams } from './EcomRemoteApi.meta';
+import { FetchNavigationParams, FetchProjectPropertiesParams, FindElementParams, FindPageParams, GetAvailableLocalesResponse } from './EcomRemoteApi.meta';
 import { EcomConfig } from '../utils/config';
 import { getTestCoreConfig } from '../utils/config.spec.data';
 import { ItemNotFoundError, UnauthorizedError, UnknownError } from '../utils/errors';
@@ -655,6 +655,88 @@ describe('EcomRemoteApi', () => {
         expect(spy).toHaveBeenCalled();
         expect(err).toBeInstanceOf(UnknownError);
         expect(err.message).toEqual('Failed to fetch project properties');
+      }
+    });
+  });
+
+  describe('getAvailableLocales()', () => {
+    it('applies data transformation', async () => {
+      // Arrange
+      const getAvailableLocalesResult = ['de_DE', 'en_GB'];
+      const spy = jest.spyOn(global, 'fetch').mockImplementation((_) =>
+        Promise.resolve({
+          json: () =>
+            Promise.resolve({
+              _embedded: [
+                {
+                  languageId: 'de_DE',
+                },
+                {
+                  languageId: 'en_GB',
+                },
+              ],
+            } as GetAvailableLocalesResponse),
+        } as Response)
+      );
+      const api = new EcomRemoteApi(combinedConfig);
+
+      // Act
+      const result = await api.getAvailableLocales();
+
+      // Assert
+      expect(result).toEqual(getAvailableLocalesResult);
+      expect(spy).toHaveBeenCalled();
+      expect(DataTransformer.applyTransformer).toHaveBeenCalledWith(Transformer.GET_AVAILABLE_LOCALES, getAvailableLocalesResult);
+    });
+    it('throws an error if FSXA throws 404', async () => {
+      expect.assertions(3);
+      // Arrange
+      const error = new Error(FSXAApiErrors.NOT_FOUND);
+      const spy = jest.spyOn(global, 'fetch').mockImplementation((_) => Promise.reject(error));
+      const api = new EcomRemoteApi(combinedConfig);
+
+      // Act
+      try {
+        await api.getAvailableLocales();
+      } catch (err: any) {
+        // Assert
+        expect(spy).toHaveBeenCalled();
+        expect(err).toBeInstanceOf(ItemNotFoundError);
+        expect(err.message).toEqual('Failed to get available locales - not found');
+      }
+    });
+    it('throws an error if FSXA throws 401', async () => {
+      expect.assertions(3);
+      // Arrange
+      const error = new Error(FSXAApiErrors.NOT_AUTHORIZED);
+      const spy = jest.spyOn(global, 'fetch').mockImplementation((_) => Promise.reject(error));
+      const api = new EcomRemoteApi(combinedConfig);
+
+      // Act
+      try {
+        await api.getAvailableLocales();
+      } catch (err: any) {
+        // Assert
+        expect(spy).toHaveBeenCalled();
+        expect(err).toBeInstanceOf(UnauthorizedError);
+        expect(err.message).toEqual('Failed to get available locales - unauthorized');
+      }
+    });
+    it('throws an error if FSXA throws unknown error', async () => {
+      expect.assertions(3);
+      // Arrange
+      const error = new Error('UNKNOWN ERROR');
+      const spy = jest.spyOn(global, 'fetch').mockImplementation((_) => Promise.reject(error));
+      const api = new EcomRemoteApi(combinedConfig);
+
+      // Act
+      try {
+        await api.getAvailableLocales();
+      } catch (err: any) {
+        // Assert
+        expect(spy).toHaveBeenCalled();
+        expect(err).toBeInstanceOf(UnknownError);
+        expect(err.message).toEqual('Failed to get available locales');
       }
     });
   });

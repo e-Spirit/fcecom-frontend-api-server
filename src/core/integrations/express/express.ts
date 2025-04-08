@@ -9,6 +9,8 @@ import {
   FIND_PAGE_ROUTE,
   findElement,
   findPage,
+  getAvailableLocales,
+  GET_AVAILABLE_LOCALES_ROUTE,
   IS_PREVIEW_ROUTE,
   isPreview,
 } from './handlers';
@@ -40,6 +42,7 @@ export const getEcomEndpoints = (config: CoreConfig) => {
   router.get(FIND_ELEMENT_ROUTE, findElement);
   router.get(IS_PREVIEW_ROUTE, isPreview);
   router.get(FETCH_PROJECT_PROPERTIES_ROUTE, fetchProjectProperties);
+  router.get(GET_AVAILABLE_LOCALES_ROUTE, getAvailableLocales);
 
   router.all('*', fallbackHandler);
 

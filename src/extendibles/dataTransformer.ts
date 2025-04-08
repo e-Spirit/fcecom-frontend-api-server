@@ -2,10 +2,11 @@ import { getLogger } from '../core/utils/logging/getLogger';
 import { set } from 'lodash';
 import { FetchResponseItem } from '../core/api/EcomRemoteApi.meta';
 import { Dataset, GCAPage, Image, NavigationData, Page, ProjectProperties } from 'fsxa-api';
+import { GetAvailableLocalesResponse } from 'fcecom-frontend-api-client/src/core/api/Remoteservice.meta';
 
 /**
  * A DataTransformer is a namespace provided to transform the responses from
- * `findPage()`, `findElement()`, `fetchNavigation()` and `fetchProjectProperties()`.
+ * `findPage()`, `findElement()`, `fetchNavigation()` and `fetchProjectProperties()` and `getAvailableLocales()`.
  */
 export namespace DataTransformer {
   const logger = getLogger('Data Transformation');
@@ -15,10 +16,11 @@ export namespace DataTransformer {
     findElement?: (element: TransformerParameters[Transformer.FIND_ELEMENT]) => any;
     fetchNavigation?: (navigation: TransformerParameters[Transformer.FETCH_NAVIGATION]) => any;
     fetchProjectProperties?: (projectProperties: TransformerParameters[Transformer.FETCH_PROJECT_PROPERTIES]) => any;
+    getAvailableLocales?: (availableLocales: TransformerParameters[Transformer.GET_AVAILABLE_LOCALES]) => any;
   } = {};
 
   /**
-   * Registers a transformer function to be used in `findPage()`, `findElement()` and `fetchNavigation()`
+   * Registers a transformer function to be used in `findPage()`, `findElement()` and `fetchNavigation()`, `fetchProjectProperties()` and `getAvailableLocales()`
    * methods inside the EcomRemoteApi.
    *
    * @example
@@ -84,6 +86,8 @@ export namespace DataTransformer {
           return transformers.fetchNavigation?.(response as TransformerParameters['fetchNavigation']);
         case 'fetchProjectProperties':
           return transformers.fetchProjectProperties?.(response as TransformerParameters['fetchProjectProperties']);
+        case 'getAvailableLocales':
+          return transformers.getAvailableLocales?.(response as TransformerParameters['getAvailableLocales']);
       }
     } catch (err: unknown) {
       logger.error(`Problem transforming response of ${transformer}`, err);
@@ -100,6 +104,7 @@ export enum Transformer {
   FIND_ELEMENT = 'findElement',
   FETCH_NAVIGATION = 'fetchNavigation',
   FETCH_PROJECT_PROPERTIES = 'fetchProjectProperties',
+  GET_AVAILABLE_LOCALES = 'getAvailableLocales',
 }
 
 /**
@@ -110,4 +115,5 @@ export type TransformerParameters = {
   findElement: Page | GCAPage | Dataset | Image | any | null;
   fetchNavigation: NavigationData | null;
   fetchProjectProperties: ProjectProperties | unknown | null;
+  getAvailableLocales: GetAvailableLocalesResponse | null;
 };

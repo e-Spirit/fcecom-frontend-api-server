@@ -309,3 +309,267 @@ paths:
                     example: false
         default:
           description: ''
+  /fetchProjectProperties:
+    get:
+      operationId: fetchProjectProperties
+      summary: Fetches the project properties from CaaS.
+      parameters:
+        - name: x-referrer
+          description: Provide url about the iframe parent
+          in: header
+          required: false
+          schema:
+            type: string
+            format: url
+        - name: token
+          description: Provide a token for ShareView
+          in: header
+          required: false
+          schema:
+            type: string
+            format: string
+        - name: locale
+          description: Locale of the desired response.
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Information about the project properties.
+          headers:
+            Access-Control-Expose-Headers:
+              description: Header to expose the `shared-preview` header.
+              schema:
+                type: string
+            shared-preview:
+              description: Header indicating shared preview information.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: ProjectProperties
+                  data:
+                    type: object
+                    properties:
+                      ps_logo:
+                        type: object
+                        properties:
+                          type:
+                            type: string
+                            example: Image
+                          id:
+                            type: string
+                          previewId:
+                            type: string
+                          meta:
+                            type: object
+                          description:
+                            type: string
+                            nullable: true
+                          resolutions:
+                            type: object
+                            additionalProperties:
+                              type: object
+                              properties:
+                                fileSize:
+                                  type: integer
+                                extension:
+                                  type: string
+                                mimeType:
+                                  type: string
+                                width:
+                                  type: integer
+                                height:
+                                  type: integer
+                                url:
+                                  type: string
+                      ps_logo_small:
+                        type: object
+                        properties:
+                          type:
+                            type: string
+                            example: Image
+                          id:
+                            type: string
+                          previewId:
+                            type: string
+                          meta:
+                            type: object
+                          description:
+                            type: string
+                            nullable: true
+                          resolutions:
+                            type: object
+                            additionalProperties:
+                              type: object
+                              properties:
+                                fileSize:
+                                  type: integer
+                                extension:
+                                  type: string
+                                mimeType:
+                                  type: string
+                                width:
+                                  type: integer
+                                height:
+                                  type: integer
+                                url:
+                                  type: string
+                      ps_logo_text:
+                        type: string
+                      ps_theme_primary:
+                        type: string
+                      ps_theme_secondary:
+                        type: string
+                    example:
+                      ps_logo:
+                        type: Image
+                        id: 74fe3e66-0408-4aa8-8bd1-6f7ea3e2858f
+                        previewId: 74fe3e66-0408-4aa8-8bd1-6f7ea3e2858f.de_DE
+                        meta: { }
+                        description: null
+                        resolutions:
+                          16x4_L:
+                            fileSize: 4004
+                            extension: png
+                            mimeType: image/png
+                            width: 480
+                            height: 480
+                            url: https://example.org/image.16x4_L.de_DE
+                      ps_logo_small:
+                        type: Image
+                        id: 8d11b307-2a4e-4c8c-8cbb-d79afcc00af1
+                        previewId: 8d11b307-2a4e-4c8c-8cbb-d79afcc00af1.de_DE
+                        meta: { }
+                        description: null
+                        resolutions:
+                          16x4_L:
+                            fileSize: 3991
+                            extension: png
+                            mimeType: image/png
+                            width: 480
+                            height: 480
+                            url: https://example.org/image.16x4_L.de_DE
+                      ps_logo_text: Connect for Commerce
+                      ps_theme_primary: "#D5DD03"
+                      ps_theme_secondary: "#999999"
+                  layout:
+                    type: string
+                    example: project_settings
+                  meta:
+                    type: object
+                    example: { }
+                  name:
+                    type: string
+                    example: ProjectProperties
+                  previewId:
+                    type: string
+                    example: 1775ac7c-39e0-49fd-8285-5e7ac76fd717.de_DE
+                  id:
+                    type: string
+                    example: 1775ac7c-39e0-49fd-8285-5e7ac76fd717
+                  masterLocale:
+                    type: object
+                    properties:
+                      identifier:
+                        type: string
+                        example: EN
+                      country:
+                        type: string
+                        example: GB
+                      language:
+                        type: string
+                        example: en
+                example:
+                  type: ProjectProperties
+                  data:
+                    ps_logo:
+                      type: Image
+                      id: 74fe3e66-0408-4aa8-8bd1-6f7ea3e2858f
+                      previewId: 74fe3e66-0408-4aa8-8bd1-6f7ea3e2858f.de_DE
+                      meta: { }
+                      description: null
+                      resolutions:
+                        16x4_L:
+                          fileSize: 4004
+                          extension: png
+                          mimeType: image/png
+                          width: 480
+                          height: 480
+                          url: https://example.org/image.16x4_L.de_DE
+                    ps_logo_small:
+                      type: Image
+                      id: 8d11b307-2a4e-4c8c-8cbb-d79afcc00af1
+                      previewId: 8d11b307-2a4e-4c8c-8cbb-d79afcc00af1.de_DE
+                      meta: { }
+                      description: null
+                      resolutions:
+                        16x4_L:
+                          fileSize: 3991
+                          extension: png
+                          mimeType: image/png
+                          width: 480
+                          height: 480
+                          url: https://example.org/image.16x4_L.de_DE
+                    ps_logo_text: Connect for Commerce
+                    ps_theme_primary: "#D5DD03"
+                    ps_theme_secondary: "#999999"
+                  layout: project_settings
+                  meta: { }
+                  name: ProjectProperties
+                  previewId: 1775ac7c-39e0-49fd-8285-5e7ac76fd717.de_DE
+                  id: 1775ac7c-39e0-49fd-8285-5e7ac76fd717
+                  masterLocale:
+                    identifier: EN
+                    country: GB
+                    language: en
+        default:
+          description: ''
+  /getAvailableLocales:
+    get:
+      operationId: getAvailableLocales
+      summary: Gets the available locales in the configured FirstSpirit project.
+      parameters:
+        - name: x-referrer
+          description: Provide url about the iframe parent
+          in: header
+          required: false
+          schema:
+            type: string
+            format: url
+        - name: token
+          description: Provide a token for ShareView
+          in: header
+          required: false
+          schema:
+            type: string
+            format: string
+      responses:
+        '200':
+          description: Information about the available locales inside the configured FirstSpirit project.
+          headers:
+            Access-Control-Expose-Headers:
+              description: Header to expose the `shared-preview` header.
+              schema:
+                type: string
+            shared-preview:
+              description: Header indicating shared preview information.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+                example:
+                  - en_GB
+                  - de_DE
+        default:
+          description: ''
