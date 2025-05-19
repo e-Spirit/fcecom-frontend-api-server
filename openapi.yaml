@@ -124,7 +124,7 @@ paths:
           schema:
             type: string
             format: url
-        - name: token
+        - name: ecom-share-token
           description: Provide a token for ShareView
           in: header
           required: false
@@ -214,7 +214,7 @@ paths:
           schema:
             type: string
             format: url
-        - name: token
+        - name: ecom-share-token
           description: Provide a token for ShareView
           in: header
           required: false
@@ -265,6 +265,126 @@ paths:
                             example: en_GB
         default:
           description: ''
+  /fetchByFilter:
+    post:
+      operationId: fetchByFilter
+      summary: Fetches elements based on filter criteria.
+      parameters:
+        - name: x-referrer
+          description: Provide url about the iframe parent
+          in: header
+          required: false
+          schema:
+            type: string
+            format: url
+        - name: ecom-share-token
+          description: Provide a token for ShareView
+          in: header
+          required: false
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                filters:
+                  type: array
+                  description: Filter queries to be applied
+                  items:
+                    oneOf:
+                      - $ref: '#/components/schemas/LogicalFilter'
+                      - $ref: '#/components/schemas/ComparisonFilter'
+                      - $ref: '#/components/schemas/ArrayFilter'
+                      - $ref: '#/components/schemas/EvaluationFilter'
+                locale:
+                  type: string
+                  description: Locale of the desired response
+                  example: de_DE
+                page:
+                  type: integer
+                  description: Page number for pagination
+                  example: 1
+                pagesize:
+                  type: integer
+                  description: Number of items per page
+                  example: 10
+                additionalParams:
+                  type: object
+                  description: Additional parameters to be passed to the service
+                  additionalProperties: true
+                remoteProject:
+                  type: string
+                  description: ID of the remote project
+                sort:
+                  type: array
+                  description: Sorting parameters
+                  items:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        description: Name of the field to sort by
+                      order:
+                        type: string
+                        enum: [ asc, desc ]
+                        description: Sort order
+                normalized:
+                  type: boolean
+                  description: Whether to return normalized response
+                  example: true
+              example:
+                filters:
+                  - operator: $and
+                    filters:
+                      - field: page.formData.type.value
+                        operator: $eq
+                        value: content
+                      - field: page.formData.id.value
+                        operator: $eq
+                        value: homepage
+                locale: de_DE
+                page: 1
+                pagesize: 20
+                sort:
+                  - name: page.formData.title.value
+                    order: asc
+                normalized: true
+      responses:
+        '200':
+          description: Response containing filtered content items.
+          headers:
+            Access-Control-Expose-Headers:
+              description: Header to expose the `shared-preview` header.
+              schema:
+                type: string
+            shared-preview:
+              description: Header indicating shared preview information.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/NormalizedFetchResponse'
+                  - $ref: '#/components/schemas/DenormalizedFetchResponse'
+        '400':
+          description: Invalid request parameters.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        '401':
+          description: Unauthorized access.
+        '404':
+          description: No results found.
+        '500':
+          description: Internal server error.
   /isPreview:
     get:
       operationId: isPreview
@@ -277,7 +397,7 @@ paths:
           schema:
             type: string
             format: url
-        - name: token
+        - name: ecom-share-token
           description: Provide a token for ShareView
           in: header
           required: false
@@ -321,7 +441,7 @@ paths:
           schema:
             type: string
             format: url
-        - name: token
+        - name: ecom-share-token
           description: Provide a token for ShareView
           in: header
           required: false
@@ -543,7 +663,7 @@ paths:
           schema:
             type: string
             format: url
-        - name: token
+        - name: ecom-share-token
           description: Provide a token for ShareView
           in: header
           required: false
@@ -573,3 +693,206 @@ paths:
                   - de_DE
         default:
           description: ''
+
+components:
+  schemas:
+    ComparisonFilter:
+      oneOf:
+        - type: object
+          properties:
+            field:
+              type: string
+            operator:
+              type: string
+              enum: [ $gt, $gte, $lt, $lte ]
+            value:
+              oneOf:
+                - type: number
+                - type: string
+          required:
+            - field
+            - operator
+            - value
+        - type: object
+          properties:
+            field:
+              type: string
+            operator:
+              type: string
+              enum: [ $in, $nin ]
+            value:
+              type: array
+              items:
+                oneOf:
+                  - type: string
+                  - type: number
+                  - type: boolean
+                  - type: 'null'
+          required:
+            - field
+            - operator
+            - value
+        - type: object
+          properties:
+            field:
+              type: string
+            operator:
+              type: string
+              enum: [ $eq, $ne ]
+            value:
+              oneOf:
+                - type: string
+                - type: number
+                - type: boolean
+                - type: null
+                - type: array
+                  items:
+                    oneOf:
+                      - type: string
+                      - type: number
+                      - type: boolean
+                      - type: null
+          required:
+            - field
+            - operator
+            - value
+
+    ArrayFilter:
+      type: object
+      properties:
+        field:
+          type: string
+        operator:
+          type: string
+          enum: [ $all ]
+        value:
+          type: array
+          items:
+            oneOf:
+              - type: string
+              - type: number
+              - type: boolean
+      required:
+        - field
+        - operator
+        - value
+
+    EvaluationFilter:
+      type: object
+      properties:
+        field:
+          type: string
+        operator:
+          type: string
+          enum: [ $regex ]
+        value:
+          type: string
+      required:
+        - field
+        - operator
+        - value
+
+    LogicalFilter:
+      oneOf:
+        - type: object
+          properties:
+            operator:
+              type: string
+              enum: [ $and, $or, $nor ]
+            filters:
+              type: array
+              items:
+                oneOf:
+                  - $ref: '#/components/schemas/LogicalFilter'
+                  - $ref: '#/components/schemas/ComparisonFilter'
+                  - $ref: '#/components/schemas/ArrayFilter'
+          required:
+            - operator
+            - filters
+        - type: object
+          properties:
+            field:
+              type: string
+            operator:
+              type: string
+              enum: [ $not ]
+            filter:
+              type: object
+              properties:
+                operator:
+                  type: string
+                value:
+                  type: object
+          required:
+            - field
+            - operator
+            - filter
+
+    BaseItem:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+        previewId:
+          type: string
+      required:
+        - id
+        - type
+
+    FetchResponseBase:
+      type: object
+      properties:
+        page:
+          type: integer
+        pagesize:
+          type: integer
+        totalPages:
+          type: integer
+        size:
+          type: integer
+      required:
+        - page
+        - pagesize
+
+    NormalizedFetchResponse:
+      allOf:
+        - $ref: '#/components/schemas/FetchResponseBase'
+        - type: object
+          properties:
+            items:
+              type: array
+              items:
+                $ref: '#/components/schemas/BaseItem'
+            resolvedReferences:
+              type: object
+              additionalProperties: true
+            referenceMap:
+              type: object
+              additionalProperties:
+                type: array
+                items:
+                  type: string
+          required:
+            - items
+
+    DenormalizedFetchResponse:
+      allOf:
+        - $ref: '#/components/schemas/FetchResponseBase'
+        - type: object
+          properties:
+            items:
+              type: array
+              items:
+                oneOf:
+                  - $ref: '#/components/schemas/BaseItem'
+                  - type: object
+            resolvedReferences:
+              type: 'null'
+            referenceMap:
+              type: 'null'
+          required:
+            - items
+            - resolvedReferences
+            - referenceMap

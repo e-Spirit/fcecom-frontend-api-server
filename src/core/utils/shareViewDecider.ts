@@ -59,7 +59,7 @@ export namespace ShareViewDecider {
 
     try {
       // Decrypt and validate token
-      const { secret } = EcomConfig.getCoreConfig().project?.shareView;
+      const { secret } = EcomConfig.getCoreConfig().project?.shareView ?? {};
       const { payload } = await verifyToken(token, secret);
       const { UniversalAllow, FsDriven } = payload;
 

@@ -13,6 +13,8 @@ import {
   GET_AVAILABLE_LOCALES_ROUTE,
   IS_PREVIEW_ROUTE,
   isPreview,
+  fetchByFilter,
+  FETCH_BY_FILTER_ROUTE,
 } from './handlers';
 import { CoreConfig } from '../../utils/config.meta';
 import { initCoreConfig } from '../../utils/init';
@@ -42,6 +44,7 @@ export const getEcomEndpoints = (config: CoreConfig) => {
   router.get(FIND_ELEMENT_ROUTE, findElement);
   router.get(IS_PREVIEW_ROUTE, isPreview);
   router.get(FETCH_PROJECT_PROPERTIES_ROUTE, fetchProjectProperties);
+  router.post(FETCH_BY_FILTER_ROUTE, fetchByFilter);
   router.get(GET_AVAILABLE_LOCALES_ROUTE, getAvailableLocales);
 
   router.all('*', fallbackHandler);

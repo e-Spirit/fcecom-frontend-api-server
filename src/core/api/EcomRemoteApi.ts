@@ -1,7 +1,9 @@
 import {
   ComparisonQueryOperatorEnum,
   Dataset,
+  FetchByFilterParams,
   FetchProjectPropertiesParams,
+  FetchResponse,
   FSXAApiErrors,
   FSXARemoteApi,
   FSXARemoteApiConfig,
@@ -13,9 +15,21 @@ import {
   ProjectProperties,
   Section,
 } from 'fsxa-api';
-import { InvalidLocaleError, ItemNotFoundError, MissingParameterError, UnauthorizedError, UnknownError } from '../utils/errors';
+import {
+  InvalidLocaleError,
+  ItemNotFoundError,
+  MissingParameterError,
+  UnauthorizedError,
+  UnknownError,
+} from '../utils/errors';
 import { EcomConfig } from '../utils/config';
-import { AvailableLocale, FetchNavigationParams, FetchResponseItem, FindElementParams, FindPageParams } from './EcomRemoteApi.meta';
+import {
+  AvailableLocale,
+  FetchNavigationParams,
+  FetchResponseItem,
+  FindElementParams,
+  FindPageParams,
+} from './EcomRemoteApi.meta';
 import { getLogger } from '../utils/logging/getLogger';
 import { filterEmptySections } from '../utils/sectionFilter';
 import { DataTransformer, Transformer } from '../../extendibles/dataTransformer';
@@ -98,6 +112,32 @@ export class EcomRemoteApi {
         }
       }
       throw new UnknownError('Failed to find page');
+    }
+  }
+
+  /**
+   * Fetches by filter.
+   *
+   * @param filter Filters to use to fetch item(s).
+   * @return {*} Details about the filtered item(s).
+   */
+  async fetchByFilter(filter: FetchByFilterParams): Promise<FetchResponse | null> {
+    if (!filter) throw new MissingParameterError('Filter is not set');
+    filter.locale = filter.locale || EcomConfig.getDefaultLocale();
+
+    try {
+      const response = (await this.fsxaRemoteApi.fetchByFilter(filter)) as FetchResponse ?? null;
+      return DataTransformer.applyTransformer(Transformer.FETCH_BY_FILTER, response);
+    } catch (err: unknown) {
+      getLogger('EcomRemoteApi').error('Error during fetchByFilter', err);
+      if (err instanceof Error) {
+        if (err.message === FSXAApiErrors.NOT_FOUND) {
+          throw new ItemNotFoundError('Failed to fetch by filter - not found');
+        } else if (err.message === FSXAApiErrors.NOT_AUTHORIZED) {
+          throw new UnauthorizedError('Failed to fetch by filter - unauthorized');
+        }
+      }
+      throw new UnknownError('Failed to fetch by filter');
     }
   }
 

@@ -86,6 +86,16 @@ describe('DataTransformer', () => {
       // Assert
       expect(result).toEqual('TRANSFORMED_RESULT');
     });
+    it('applies transformer for FETCH_BY_FILTER if set ', async () => {
+      // Arrange
+      const transformFn = jest.fn().mockResolvedValue('TRANSFORMED_RESULT');
+      const response = {} as any; // Use object to later check for equality of reference
+      DataTransformer.registerTransformer(Transformer.FETCH_BY_FILTER, transformFn);
+      // Act
+      const result = await DataTransformer.applyTransformer(Transformer.FETCH_BY_FILTER, response);
+      // Assert
+      expect(result).toEqual('TRANSFORMED_RESULT');
+    });
     it('logs an error on transformation error ', async () => {
       // Arrange
       expect.assertions(2);
@@ -106,3 +116,4 @@ describe('DataTransformer', () => {
     });
   });
 });
+
