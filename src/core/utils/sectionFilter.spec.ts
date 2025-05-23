@@ -13,7 +13,7 @@ describe('sectionFilter', () => {
             name: 'VALUE',
           },
           id: 'TRANSLATED_SECTION',
-          previewId: 'PREVIEWID',
+          previewId: 'PreviewId',
           sectionType: 'SECTIONTYPE',
         },
         {
@@ -23,7 +23,7 @@ describe('sectionFilter', () => {
             name: null,
           },
           id: 'UNTRANSLATED_SECTION_NULL',
-          previewId: 'PREVIEWID',
+          previewId: 'PreviewId',
           sectionType: 'SECTIONTYPE',
         },
         {
@@ -36,7 +36,7 @@ describe('sectionFilter', () => {
             },
           },
           id: 'UNTRANSLATED_SECTION_WITH_OPTION',
-          previewId: 'PREVIEWID',
+          previewId: 'PreviewId',
           sectionType: 'SECTIONTYPE',
         },
         {
@@ -46,7 +46,7 @@ describe('sectionFilter', () => {
             name: [],
           },
           id: 'UNTRANSLATED_SECTION_WITH_ARRAY',
-          previewId: 'PREVIEWID',
+          previewId: 'PreviewId',
           sectionType: 'SECTIONTYPE',
         },
       ] as Section[];
