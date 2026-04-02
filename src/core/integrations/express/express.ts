@@ -15,6 +15,8 @@ import {
   isPreview,
   fetchByFilter,
   FETCH_BY_FILTER_ROUTE,
+  caasChangeStream,
+  CAAS_CHANGE_STREAM_ROUTE,
 } from './handlers';
 import { CoreConfig } from '../../utils/config.meta';
 import { initCoreConfig } from '../../utils/init';
@@ -46,6 +48,7 @@ export const getEcomEndpoints = (config: CoreConfig) => {
   router.get(FETCH_PROJECT_PROPERTIES_ROUTE, fetchProjectProperties);
   router.post(FETCH_BY_FILTER_ROUTE, fetchByFilter);
   router.get(GET_AVAILABLE_LOCALES_ROUTE, getAvailableLocales);
+  router.get(CAAS_CHANGE_STREAM_ROUTE, caasChangeStream);
 
   router.all('*', fallbackHandler);
 

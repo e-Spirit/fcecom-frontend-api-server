@@ -5,4 +5,5 @@ export { fetchByFilter, FETCH_BY_FILTER_ROUTE } from './fetchByFilter';
 export { findElement, FIND_ELEMENT_ROUTE } from './findElement';
 export { isPreview, IS_PREVIEW_ROUTE } from './isPreview';
 export { getAvailableLocales, GET_AVAILABLE_LOCALES_ROUTE } from './getAvailableLocales';
+export { caasChangeStream, CAAS_CHANGE_STREAM_ROUTE } from './caasChangeStream';
 export { fallbackHandler } from './fallbackHandler';

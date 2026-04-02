@@ -1,3 +1,9 @@
+## [1.9.0](https://github.com/e-Spirit/fcecom-frontend-api-server/compare/v1.8.2...v1.9.0) (2026-04-02)
+
+### Changes
+
+* Added CaasChangeStreamManager (singleton WebSocket connection to the CaaS change stream) and a new GET /caas-change-stream SSE endpoint that proxies incoming CaaS change events to browser clients in real time.
+
 ## [1.8.2](https://github.com/e-Spirit/fcecom-frontend-api-server/compare/v1.8.1...v1.8.2) (2025-09-01)
 
 ### Changes
